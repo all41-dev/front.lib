@@ -1,0 +1,10 @@
+**/*.sql
+**/*.md
+**/*.html
+**/*.css
+**/browserslist
+**/*.ico
+**/*.json
+**/*.png
+**/*.js
+**/*.svg

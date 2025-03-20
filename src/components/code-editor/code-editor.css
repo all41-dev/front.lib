@@ -1,0 +1,21 @@
+/* code-editor.css */
+.editor-container {
+  overflow-y: auto;
+}
+
+.modal {
+  display: none; /* Hidden by default */
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-dialog {
+  max-width: 90%;
+  width: auto;
+}
+
+.modal-body .editor-container {
+  height: 80vh;
+}

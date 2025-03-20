@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+.selected-row {
+  background-color: rgb(219, 243, 234) !important;
+  border-left: .3em solid rgb(157, 217, 193);
+  padding-left: .3em;
+  transition:
+    background-color 0.2s ease-in-out,
+    border-left 0.2s ease-in-out,
+    padding-left 0.2s ease-in-out;
+}
+
+.tabulator-row:not(.selected-row) {
+  border-left: .3em solid transparent;
+  padding-left: .3em;
+}
+
+.map-height {
+  height: 25vh !important;
+  overflow: scroll;
+}
+
+.edition-content {
+  background-color: rgb(219, 243, 234);
+}
+
+.modified-field {
+  background-color: rgb(255, 251, 213);
+}
+
+h5 {
+  text-align: center;
+}
+
+.btn-width {
+  min-width: 70px;
+}
+
+.warning-row {
+  background-color: #ffc10714 !important;
+}
+
+.error-row {
+  background-color: #FFCCCB !important;
+}
+.tabulator-validation-fail{
+  border-color:  #fc0000 !important;
+}
+
+.edited-editor{
+  background-color: rgb(255, 251, 213) !important;
+}
+.edited-row{
+  border-left: 6px solid rgb(255, 187, 0);
+}
+
+.customCheck{
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.customCheck:hover {
+  border-color: #0056b3;
+}
+
+
