@@ -36,14 +36,15 @@
 
 ## Events
 
-| Event                     | Description | Type                                                            |
-| ------------------------- | ----------- | --------------------------------------------------------------- |
-| `loadedTable`             |             | `CustomEvent<{ table: CustomTabulatorRecMatching; }>`           |
-| `rowDeleted`              |             | `CustomEvent<{ row: RowComponent; componentName: string; }>`    |
-| `rowEditionButtonClicked` |             | `CustomEvent<{ row: RowComponent; componentName: string; }>`    |
-| `rows`                    |             | `CustomEvent<{ rows: RowComponent[]; componentName: string; }>` |
-| `rowSaved`                |             | `CustomEvent<{ rows: RowComponent[]; componentName: string; }>` |
-| `rowSelected`             |             | `CustomEvent<{ rows: RowComponent[]; componentName: string; }>` |
+| Event                     | Description | Type                                                                         |
+| ------------------------- | ----------- | ---------------------------------------------------------------------------- |
+| `loadedTable`             |             | `CustomEvent<{ table: CustomTabulatorRecMatching; componentName: string; }>` |
+| `rowDeleted`              |             | `CustomEvent<{ row: RowComponent; componentName: string; }>`                 |
+| `rowEditionButtonClicked` |             | `CustomEvent<{ row: RowComponent; componentName: string; }>`                 |
+| `rows`                    |             | `CustomEvent<{ rows: RowComponent[]; componentName: string; }>`              |
+| `rowSaved`                |             | `CustomEvent<{ rows: RowComponent[]; componentName: string; }>`              |
+| `rowSelected`             |             | `CustomEvent<{ rows: RowComponent[]; componentName: string; }>`              |
+| `tableBuilt`              |             | `CustomEvent<{ table: CustomTabulatorRecMatching; componentName: string; }>` |
 
 
 ## Methods

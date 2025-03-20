@@ -5,6 +5,8 @@ import { CellHelper, HtmlHelper, RowHelper } from '../../utils/utils';
 import { CustomTabulatorColumn, CustomTabulatorRecMatching } from '../../interfaces/custom-tabulator.types';
 import { singular } from 'pluralize';
 import { DateTime } from 'luxon';
+import Swal from 'sweetalert2';
+
 @Component({
   tag: 'custom-tabulator',
   styleUrl: 'custom-tabulator.css',
@@ -53,7 +55,8 @@ export class CustomTabulator {
   // },
   @Event({ bubbles: true, composed: true }) rowSelected: EventEmitter<{ rows: RowComponent[]; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rows: EventEmitter<{ rows: RowComponent[]; componentName: string }>;
-  @Event({ bubbles: true, composed: true }) loadedTable: EventEmitter<{ table: CustomTabulatorRecMatching }>;
+  @Event({ bubbles: true, composed: true }) loadedTable: EventEmitter<{ table: CustomTabulatorRecMatching; componentName: string }>;
+  @Event({ bubbles: true, composed: true }) tableBuilt: EventEmitter<{ table: CustomTabulatorRecMatching; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowDeleted: EventEmitter<{ row: RowComponent; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowSaved: EventEmitter<{ rows: RowComponent[]; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowEditionButtonClicked: EventEmitter<{ row: RowComponent; componentName: string }>;
@@ -248,8 +251,7 @@ export class CustomTabulator {
                   confirm('Delete record?') ? this.deleteRow(cell.getRow()) : '';
                 }
               };
-              if(this.isDeletionPermited){
-
+              if (this.isDeletionPermited) {
                 btnGroup.insertBefore(deleteBtn, null);
               }
             }
@@ -341,6 +343,9 @@ export class CustomTabulator {
             .then(() => {});
         }
       });
+      this.tabulatorComponent.on('tableBuilt', () => {
+        this.tableBuilt.emit({ table: { tabulatorInstance: this.tabulatorComponent }, componentName: this.name });
+      });
       this.tabulatorComponent.on('dataLoaded', data => {
         this.rows.emit({ rows: this.tabulatorComponent.getRows(), componentName: this.name });
 
@@ -348,7 +353,7 @@ export class CustomTabulator {
           // add new row for insertion
           data.push(this.rowDefault ? JSON.parse(JSON.stringify(this.rowDefault)) : {});
         }
-        this.loadedTable.emit({ table: { tabulatorInstance: this.tabulatorComponent } });
+        this.loadedTable.emit({ table: { tabulatorInstance: this.tabulatorComponent }, componentName: this.name });
       });
       this.tabulatorComponent.on('cellEdited', (cell: CellComponent) => {
         // store "real" initial value of field that survives row.reformat()
@@ -365,14 +370,16 @@ export class CustomTabulator {
           if (row && row.getElement) {
             const rowElement = row.getElement();
             rowElement.classList.remove('selected-row');
-            if (row.getTreeChildren && typeof row.getTreeChildren === 'function') {
+
+            // Check if `getTreeChildren` is a function and the row supports tree structure
+            if (row.getTreeChildren && typeof row.getTreeChildren === 'function' && this.options.dataTree) {
               try {
                 const childRows = row.getTreeChildren();
-                if (Array.isArray(childRows)) {
-                  childRows.forEach(clearRowClass);
+                if (Array.isArray(childRows) && childRows.length > 0) {
+                  childRows.forEach(clearRowClass); // Recursively clear classes
                 }
               } catch (error) {
-                console.error(error);
+                console.error('Error while processing tree children:', error);
               }
             }
           }
@@ -600,33 +607,43 @@ export class CustomTabulator {
         throw err;
       });
   }
-  deleteRow(row: RowComponent): void {
-    const value = row.getData();
+  deleteRow(row: RowComponent): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const value = row.getData();
 
-    if (value[this.idPropName]) {
-      fetch(`${Env.apiUrl}/${this.postRoute}/${value[this.idPropName]}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          ...this.requestHeaders,
-        },
-      })
-        .then(() => {
-          row.delete();
-          this.rowDeleted.emit({ row, componentName: this.name });
+      if (value[this.idPropName]) {
+        fetch(`${Env.apiUrl}/${this.postRoute}/${value[this.idPropName]}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...this.requestHeaders,
+          },
         })
-        .then(() => {
-          this.showSideEditionWindow(true);
-        })
-        .catch(err => {
-          throw new Error(err);
-        });
-    } else {
-      row.delete();
-      this.showSideEditionWindow(true);
-    }
+          .then(async response => {
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || response.statusText);
+            }
+          })
+          .then(() => {
+            row.delete();
+            this.rowDeleted.emit({ row, componentName: this.name });
+            this.showSideEditionWindow(true);
+            resolve();
+          })
+          .catch(err => {
+            console.error('Error deleting row:', err);
+            reject(err);
+          });
+      } else {
+        row.delete();
+        this.showSideEditionWindow(true);
+        resolve();
+      }
+    });
   }
+
   revertTable(): void {
     // debugger;
     if (!this.tabulatorComponent) return;
@@ -694,8 +711,12 @@ export class CustomTabulator {
 
     const readyToSaveRows = allRows.filter(r => RowHelper.isEdited(r) && RowHelper.isValid(r));
     const readyToRevertRows = allRows.filter(r => RowHelper.isEdited(r));
-    revertBtn.hidden = readyToRevertRows.length === 0;
-    saveAllBtn.hidden = readyToSaveRows.length === 0;
+    if (revertBtn) {
+      revertBtn.hidden = readyToRevertRows.length === 0;
+    }
+    if (saveAllBtn) {
+      saveAllBtn.hidden = readyToSaveRows.length === 0;
+    }
   };
   cellEdited = (cell: CellComponent): void => {
     const row = cell.getRow();
@@ -707,22 +728,24 @@ export class CustomTabulator {
     // const hasChildRows = this.treeConfig && RowHelper.hasChilds(row);
     const hasNewChildRows = this.treeConfig && RowHelper.hasChilds(row, true, this.idPropName);
     const hideAddChild = this.treeConfig && this.treeConfig.hideAddChild && this.treeConfig.hideAddChild(row.getData());
+    let rowBtns;
+    if (!this.readOnly) {
+      rowBtns = Array.from(((commandCell.getElement().firstElementChild as HTMLElement).firstElementChild as HTMLElement).children) as HTMLButtonElement[];
+      if (rowBtns.find(btn => btn.name === 'createBtn')) {
+        // add create button
+        rowBtns.find(btn => btn.name === 'createBtn').hidden = rowInvalid || !isNew;
+      }
 
-    const rowBtns = Array.from(((commandCell.getElement().firstElementChild as HTMLElement).firstElementChild as HTMLElement).children) as HTMLButtonElement[];
-    if (rowBtns.find(btn => btn.name === 'createBtn')) {
-      // add create button
-      rowBtns.find(btn => btn.name === 'createBtn').hidden = rowInvalid || !isNew;
+      // add child button
+      (rowBtns.find(btn => btn.name === 'addChildBtn') as HTMLElement).hidden = !this.treeConfig || hideAddChild || isNew || hasNewChildRows;
+
+      // update button
+      (rowBtns.find(btn => btn.name === 'updateBtn') as HTMLElement).hidden = rowInvalid || !rowEdited || isNew;
+
+      // delete button
+      // (rowBtns.find(btn => btn.name === 'deleteBtn') as HTMLElement).hidden = hasChildRows;
+      this.rowFormater(row);
     }
-
-    // add child button
-    (rowBtns.find(btn => btn.name === 'addChildBtn') as HTMLElement).hidden = !this.treeConfig || hideAddChild || isNew || hasNewChildRows;
-
-    // update button
-    (rowBtns.find(btn => btn.name === 'updateBtn') as HTMLElement).hidden = rowInvalid || !rowEdited || isNew;
-
-    // delete button
-    // (rowBtns.find(btn => btn.name === 'deleteBtn') as HTMLElement).hidden = hasChildRows;
-    this.rowFormater(row);
   };
   detailHandleCodeEditorChange(event: any, fieldName: string): void {
     if (!this.editedRow) throw new Error('expecting modalRow to be set');
@@ -805,7 +828,6 @@ export class CustomTabulator {
   }
 
   @Method() async fillLookup(col: CustomTabulatorColumn): Promise<void> {
-
     const selectElement = document.getElementById(`modal-select-${col.field}`);
     if (!selectElement) {
       return;
@@ -820,20 +842,17 @@ export class CustomTabulator {
     } else {
       // method to be deleted, made only to support early stage of contacts feature !!!
       const getSelected = (col, k) => {
-        if(col.type && col.type === 'array'){
+        if (col.type && col.type === 'array') {
           const fieldsArray = col.field.split('.');
-          if(fieldsArray.length > 0 && this.editedRow?.getData()[fieldsArray[0]].length > 0){
+          if (fieldsArray.length > 0 && this.editedRow?.getData()[fieldsArray[0]].length > 0) {
             return this.editedRow?.getData()[fieldsArray[0]][fieldsArray[1]].uuid === k ? 'selected="selected"' : '';
           }
-        } else{
+        } else {
           return this.editedRow?.getData()[col.field] === k ? 'selected="selected"' : '';
         }
       };
-      Object.keys(values).forEach((k )=> {
-        selectElement.insertBefore(
-          HtmlHelper.toElement(`<option value="${k}" ${getSelected(col,k)}>${values[k]}</option>`),
-          null,
-        );
+      Object.keys(values).forEach(k => {
+        selectElement.insertBefore(HtmlHelper.toElement(`<option value="${k}" ${getSelected(col, k)}>${values[k]}</option>`), null);
       });
     }
   }
@@ -861,14 +880,47 @@ export class CustomTabulator {
         alert('Deletion cancelled. You must type "delete" to confirm.');
       }
     } else {
-      if (confirm('Delete record?')) {
-        this.deleteRow(this.editedRow);
-        if (this.editionMode === 'modal') {
-          this.modals[0].hide();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to delete this record? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.deleteRow(this.editedRow)
+            .then(() => {
+              if (this.editionMode === 'modal') {
+                this.modals[0].hide();
+              }
+
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'The record has been deleted.',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+              });
+            })
+            .catch(err => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Deletion Failed',
+                text: err.message || 'An unexpected error occurred while deleting the record.',
+              });
+              console.error('Error deleting row:', err);
+            });
         }
-      }
+      });
     }
   }
+
   createActionButtonGroup(): JSX.Element {
     const buttons: string[] = this.actionButtonTags.map(button => {
       let buttonElement: string;
@@ -892,7 +944,7 @@ export class CustomTabulator {
     if (!this.editedRow) return '';
     let alignClass: string;
     const cols = this.columns.filter(c => c.field !== 'custom-tabulator-controls');
-    const groups = [...new Set(cols.map(col => col.modalFieldGroup))].filter( Boolean );
+    const groups = [...new Set(cols.map(col => col.modalFieldGroup))].filter(Boolean);
     const colQuantity = Math.floor(12 / groups.length).toString();
     return (
       <div class={{ 'modal-content': true }}>
@@ -983,7 +1035,6 @@ export class CustomTabulator {
     const cols = this.columns.filter(c => c.field !== 'custom-tabulator-controls');
     const groups = [...new Set(cols.map(col => col.modalFieldGroup))].filter(Boolean);
     const colQuantity = Math.floor(12 / groups.length).toString();
-
 
     return (
       <div class="">
@@ -1118,7 +1169,7 @@ export class CustomTabulator {
         }
         return value;
       }
-      
+
       return data[field] || '';
     }
     return '';
@@ -1158,7 +1209,7 @@ export class CustomTabulator {
     const fieldId = `${this.name}-${def.field}`;
     const isHideInModal = typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal;
     let displayNoneClass;
-    isHideInModal? displayNoneClass = 'd-none' : displayNoneClass = ''
+    isHideInModal ? (displayNoneClass = 'd-none') : (displayNoneClass = '');
     switch (def.editor) {
       case 'input':
       case 'number':
@@ -1255,7 +1306,7 @@ export class CustomTabulator {
               value={this.editedRow?.getData()[def.field]}
               relatedTo={def.field}
               obj={def.obj}
-              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) :  !!def.hideInModal}
+              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal}
             ></code-editor>
           </div>
         );
@@ -1276,8 +1327,6 @@ export class CustomTabulator {
               onValueChanged={event => this.detailHandleCodeEditorChange(event, def.field)}
               class="form-control"
               value={this.editedRow?.getData()[def.field]}
-
-
             ></markdown-editor>
           </div>
         );
@@ -1296,7 +1345,7 @@ export class CustomTabulator {
               type="checkbox"
               required={(def as any).required}
               disabled={typeof def.editorReadOnly === 'function' ? def.editorReadOnly(this.editedRow?.getCell(def.field)) : !!def.editorReadOnly}
-              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) :  !!def.hideInModal}
+              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal}
             />
           </div>
         );
@@ -1318,7 +1367,7 @@ export class CustomTabulator {
               placeholder=""
               required={(def as any).required}
               disabled={typeof def.editorReadOnly === 'function' ? def.editorReadOnly(this.editedRow?.getCell(def.field)) : !!def.editorReadOnly}
-              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) :  !!def.hideInModal}
+              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal}
             />
           </div>
         );
@@ -1352,7 +1401,7 @@ export class CustomTabulator {
                 id={`modal-select-${def.field}`}
                 name={def.field}
                 onInput={e => this.detailHandleFormChange(e, def.field)}
-              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) :  !!def.hideInModal}
+                hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal}
                 // style={{ backgroundColor: CellHelper.isEdited(this.editedRow?.getCell(def.field)) ? 'rgb(255, 251, 213)' : 'inherit' }}
                 class="form-select"
                 aria-label="Default select example"
@@ -1391,7 +1440,7 @@ export class CustomTabulator {
                 class="form-control"
                 placeholder=""
                 required={(def as any).required}
-                hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) :  !!def.hideInModal}
+                hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal}
                 disabled={typeof def.editorReadOnly === 'function' ? def.editorReadOnly(this.editedRow?.getCell(def.field)) : !!def.editorReadOnly}
                 readOnly
               />

@@ -60,7 +60,7 @@ export class MarkdownPreview {
   }
 
   async renderMarkdown() {
-    const preview = document.querySelector('.preview');
+    const preview = document.querySelector('#markdowPreviewPreview');
     if (preview && this.marked) {
       const parsedHtml = this.markdown ? await this.marked.parse(this.markdown) : await this.marked.parse('');
       preview.innerHTML = parsedHtml;
@@ -70,7 +70,7 @@ export class MarkdownPreview {
   }
 
   highlightCodeBlocks() {
-    document.querySelectorAll('pre code').forEach((block) => {
+    document.querySelectorAll('pre code').forEach(block => {
       hljs.highlightElement(block as HTMLElement);
     });
   }
@@ -96,7 +96,7 @@ export class MarkdownPreview {
   render() {
     return (
       <div class="a4-preview">
-        <div class="preview p-4"></div>
+        <div class="preview p-4" id="markdowPreviewPreview"></div>
       </div>
     );
   }

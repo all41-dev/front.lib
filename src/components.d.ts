@@ -18,6 +18,7 @@ export namespace Components {
     }
     interface CustomNavigator {
         "defaultTab": number;
+        "label"?: string;
         "navElements": { labelHtml: string; contentHtml: any; linkString?: string }[];
     }
     interface CustomTabulator {
@@ -67,8 +68,6 @@ export namespace Components {
     }
     interface TestMarkdown {
     }
-    interface TestRoot {
-    }
 }
 export interface CodeEditorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -109,7 +108,8 @@ declare global {
     interface HTMLCustomTabulatorElementEventMap {
         "rowSelected": { rows: RowComponent[]; componentName: string };
         "rows": { rows: RowComponent[]; componentName: string };
-        "loadedTable": { table: CustomTabulatorRecMatching };
+        "loadedTable": { table: CustomTabulatorRecMatching; componentName: string };
+        "tableBuilt": { table: CustomTabulatorRecMatching; componentName: string };
         "rowDeleted": { row: RowComponent; componentName: string };
         "rowSaved": { rows: RowComponent[]; componentName: string };
         "rowEditionButtonClicked": { row: RowComponent; componentName: string };
@@ -181,12 +181,6 @@ declare global {
         prototype: HTMLTestMarkdownElement;
         new (): HTMLTestMarkdownElement;
     };
-    interface HTMLTestRootElement extends Components.TestRoot, HTMLStencilElement {
-    }
-    var HTMLTestRootElement: {
-        prototype: HTMLTestRootElement;
-        new (): HTMLTestRootElement;
-    };
     interface HTMLElementTagNameMap {
         "code-editor": HTMLCodeEditorElement;
         "custom-navigator": HTMLCustomNavigatorElement;
@@ -198,7 +192,6 @@ declare global {
         "test-custom-navigator": HTMLTestCustomNavigatorElement;
         "test-custom-tabulator": HTMLTestCustomTabulatorElement;
         "test-markdown": HTMLTestMarkdownElement;
-        "test-root": HTMLTestRootElement;
     }
 }
 declare namespace LocalJSX {
@@ -211,6 +204,7 @@ declare namespace LocalJSX {
     }
     interface CustomNavigator {
         "defaultTab"?: number;
+        "label"?: string;
         "navElements"?: { labelHtml: string; contentHtml: any; linkString?: string }[];
     }
     interface CustomTabulator {
@@ -227,12 +221,13 @@ declare namespace LocalJSX {
         "index"?: string;
         "isDeletionPermited"?: boolean;
         "name": string;
-        "onLoadedTable"?: (event: CustomTabulatorCustomEvent<{ table: CustomTabulatorRecMatching }>) => void;
+        "onLoadedTable"?: (event: CustomTabulatorCustomEvent<{ table: CustomTabulatorRecMatching; componentName: string }>) => void;
         "onRowDeleted"?: (event: CustomTabulatorCustomEvent<{ row: RowComponent; componentName: string }>) => void;
         "onRowEditionButtonClicked"?: (event: CustomTabulatorCustomEvent<{ row: RowComponent; componentName: string }>) => void;
         "onRowSaved"?: (event: CustomTabulatorCustomEvent<{ rows: RowComponent[]; componentName: string }>) => void;
         "onRowSelected"?: (event: CustomTabulatorCustomEvent<{ rows: RowComponent[]; componentName: string }>) => void;
         "onRows"?: (event: CustomTabulatorCustomEvent<{ rows: RowComponent[]; componentName: string }>) => void;
+        "onTableBuilt"?: (event: CustomTabulatorCustomEvent<{ table: CustomTabulatorRecMatching; componentName: string }>) => void;
         "options"?: Options;
         "postRoute"?: string;
         "readOnly"?: boolean | 'updateOnly' | 'createOnly';
@@ -266,8 +261,6 @@ declare namespace LocalJSX {
     }
     interface TestMarkdown {
     }
-    interface TestRoot {
-    }
     interface IntrinsicElements {
         "code-editor": CodeEditor;
         "custom-navigator": CustomNavigator;
@@ -279,7 +272,6 @@ declare namespace LocalJSX {
         "test-custom-navigator": TestCustomNavigator;
         "test-custom-tabulator": TestCustomTabulator;
         "test-markdown": TestMarkdown;
-        "test-root": TestRoot;
     }
 }
 export { LocalJSX as JSX };
@@ -296,7 +288,6 @@ declare module "@stencil/core" {
             "test-custom-navigator": LocalJSX.TestCustomNavigator & JSXBase.HTMLAttributes<HTMLTestCustomNavigatorElement>;
             "test-custom-tabulator": LocalJSX.TestCustomTabulator & JSXBase.HTMLAttributes<HTMLTestCustomTabulatorElement>;
             "test-markdown": LocalJSX.TestMarkdown & JSXBase.HTMLAttributes<HTMLTestMarkdownElement>;
-            "test-root": LocalJSX.TestRoot & JSXBase.HTMLAttributes<HTMLTestRootElement>;
         }
     }
 }

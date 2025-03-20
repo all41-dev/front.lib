@@ -94,12 +94,12 @@ export class MarkdownEditor {
   }
 
   async updatePreview() {
-    const editorPreview = document.querySelector('.editor-preview');
-    if(editorPreview && this.marked){
+    const editorPreview = document.querySelector('#markdownEditorEditorPreview');
+    if (editorPreview && this.marked) {
       const parsedHtml = this.markdown ? await this.marked.parse(this.markdown) : await this.marked.parse('');
       editorPreview.innerHTML = parsedHtml;
     }
-    const preview = document.querySelector('.preview');
+    const preview = document.querySelector('#markdownEditorPreview');
     if (preview && this.marked) {
       const parsedHtml = this.markdown ? await this.marked.parse(this.markdown) : await this.marked.parse('');
       preview.innerHTML = parsedHtml;
@@ -107,11 +107,10 @@ export class MarkdownEditor {
       this.renderMermaidDiagrams();
       this.addClipboardButtons();
     }
-    
   }
 
   highlightCodeBlocks() {
-    document.querySelectorAll('pre code').forEach((block) => {
+    document.querySelectorAll('pre code').forEach(block => {
       hljs.highlightElement(block as HTMLElement);
     });
   }
@@ -135,11 +134,11 @@ export class MarkdownEditor {
   }
 
   addClipboardButtons() {
-    document.querySelectorAll('pre').forEach((block) => {
+    document.querySelectorAll('pre').forEach(block => {
       const button = document.createElement('button');
       button.innerText = 'Copy';
       button.className = 'clipboard-button btn btn-sm btn-outline-secondary';
-      button.addEventListener('click', (event) => this.copyToClipboard(event, block));
+      button.addEventListener('click', event => this.copyToClipboard(event, block));
       block.appendChild(button);
       block.style.position = 'relative';
     });
@@ -152,9 +151,9 @@ export class MarkdownEditor {
       () => {
         alert('Copied to clipboard');
       },
-      (err) => {
+      err => {
         console.error('Failed to copy:', err);
-      }
+      },
     );
   }
 
@@ -169,7 +168,7 @@ export class MarkdownEditor {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const imageUrl = e.target.result;
         this.insertMarkdownImage(imageUrl as string);
       };
@@ -271,9 +270,8 @@ export class MarkdownEditor {
           onClick={() => this.toggleModal()}
           style={{ ...this.textareaStyles }}
           // value={this.markdown}
-          
         >
-          <div class="editor-preview border p-2 bg-light" id="editorPreview"></div>
+          <div class="editor-preview border p-2 bg-light" id="markdownEditorEditorPreview"></div>
         </div>
 
         <div class={`modal fade ${this.showModal ? 'show' : ''}`} tabindex="-1" style={{ display: this.showModal ? 'block' : 'none' }}>
@@ -294,12 +292,7 @@ export class MarkdownEditor {
                       <label class="btn btn-outline-secondary mb-0 me-2">
                         Upload Image
                         <i class="bi bi-upload"></i>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          class="form-control-file d-none"
-                          onChange={(event) => this.handleImageUpload(event)}
-                        />
+                        <input type="file" accept="image/*" class="form-control-file d-none" onChange={event => this.handleImageUpload(event)} />
                       </label>
                       <button class="btn btn-outline-info me-2" onClick={() => this.toggleSvgInput()}>
                         {this.showSvgInput ? 'Cancel' : 'Insert SVG'}
@@ -310,13 +303,7 @@ export class MarkdownEditor {
                   {this.showImageUrlInput && (
                     <div class="row mb-2">
                       <div class="col-6">
-                        <input
-                          type="text"
-                          class="form-control"
-                          placeholder="Enter image URL"
-                          value={this.imageUrl}
-                          onInput={(event) => this.handleImageUrlChange(event)}
-                        />
+                        <input type="text" class="form-control" placeholder="Enter image URL" value={this.imageUrl} onInput={event => this.handleImageUrlChange(event)} />
                         {this.imageUrlError && <div class="text-danger">{this.imageUrlError}</div>}
                         <button class="btn btn-success mt-2" onClick={() => this.handleInsertImageUrl()}>
                           Insert Image
@@ -331,7 +318,7 @@ export class MarkdownEditor {
                           class="form-control"
                           placeholder="Paste SVG content here"
                           value={this.svgContent}
-                          onInput={(event) => this.handleSvgContentChange(event)}
+                          onInput={event => this.handleSvgContentChange(event)}
                           rows={5}
                         ></textarea>
                         {this.svgError && <div class="text-danger">{this.svgError}</div>}
@@ -345,15 +332,15 @@ export class MarkdownEditor {
                     <div class="col-6">
                       <textarea
                         class="form-control input-area"
-                        onInput={(event) => this.handleInputChange(event)}
-                        onFocus={(event) => this.handleTextareaFocus(event)}
+                        onInput={event => this.handleInputChange(event)}
+                        onFocus={event => this.handleTextareaFocus(event)}
                         placeholder="Enter your markdown here..."
                         value={this.markdown}
                         style={{ height: '100%' }}
                       ></textarea>
                     </div>
                     <div class="col-6">
-                      <div class="preview border p-3 bg-light" style={{ height: '100%' }}></div>
+                      <div class="preview border p-3 bg-light" style={{ height: '100%' }} id="markdownEditorPreview"></div>
                     </div>
                   </div>
                 </div>

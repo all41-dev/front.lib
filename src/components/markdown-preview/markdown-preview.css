@@ -5,7 +5,8 @@ p{
   margin: 0 !important;
 }
 .a4-preview {
-  width: 21cm;
+  width: 100%;
+  max-width: 80vw;
   margin: 0 auto;
   border: 1px solid #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -92,5 +93,8 @@ blockquote{
   border-left: 5px solid rgba(0, 0, 0, .1);
   margin: 1.2em 0;
 }
-
-
+#markdowPreviewPreview {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
