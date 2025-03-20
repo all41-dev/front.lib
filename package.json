@@ -1,6 +1,6 @@
 {
   "name": "@all41-dev/front.lib",
-  "version": "0.0.1",
+  "version": "1.0.0-beta.0",
   "description": "Stencil UI lib",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
