@@ -69,14 +69,7 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [exchange-list](../exchange-list)
- - [mapping-tree](../mapping-tree)
- - [module-list](../module-list)
- - [parameter-list](../parameter-list)
- - [pkmap-list](../pkmap-list)
- - [subscription-list](../subscription-list)
  - [test-custom-tabulator](../test-custom-tabulator)
- - [unit-test-list](../unit-test-list)
 
 ### Depends on
 
@@ -88,14 +81,7 @@ Type: `Promise<void>`
 graph TD;
   custom-tabulator --> code-editor
   custom-tabulator --> markdown-editor
-  exchange-list --> custom-tabulator
-  mapping-tree --> custom-tabulator
-  module-list --> custom-tabulator
-  parameter-list --> custom-tabulator
-  pkmap-list --> custom-tabulator
-  subscription-list --> custom-tabulator
   test-custom-tabulator --> custom-tabulator
-  unit-test-list --> custom-tabulator
   style custom-tabulator fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

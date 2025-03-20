@@ -1,8 +1,9 @@
 import { Config } from '@stencil/core';
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 export const config: Config = {
   globalStyle: 'src/global/app.css',
-  namespace: 'spider-front-lib',
+  namespace: 'front-lib',
   outputTargets: [
     {
       type: 'dist',
@@ -23,5 +24,8 @@ export const config: Config = {
   ],
   env: {
     apiUrl: 'http://localhost:8000/api',
-  }
+  },
+  plugins: [
+    nodePolyfills()
+  ],
 };
