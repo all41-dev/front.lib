@@ -11,13 +11,13 @@
   "collection:main": "dist/collection/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/oB3TAo/front.lib.git"
+    "url": "https://github.com/all41-dev/front.lib.git"
   },
   "files": [
     "dist/",
     "loader/"
   ],
-  "homepage": "https://github.com/oB3TAo/front.lib.git#readme",
+  "homepage": "https://github.com/all41-dev/front.lib.git#readme",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
