@@ -1,6 +1,5 @@
 import { Component, h, Prop } from '@stencil/core';
 
-
 @Component({
   tag: 'nav-button',
   styleUrl: 'nav-button.css',

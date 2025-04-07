@@ -2,8 +2,6 @@
 // import markdownit from 'markdown-it';
 // import Mermaid from "mermaid-it";
 
-
-
 // @Component({
 //   tag: 'mark-down',
 //   styleUrl: 'markdown.css'

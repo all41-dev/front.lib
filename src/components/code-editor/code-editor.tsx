@@ -1,6 +1,6 @@
 import { Component, h, Element, Prop, Watch, Event, EventEmitter, State } from '@stencil/core';
 import * as ace from 'ace-builds';
-import { DateTime } from 'luxon';  // Ensure Luxon is installed and imported
+import { DateTime } from 'luxon'; // Ensure Luxon is installed and imported
 
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-monokai';
@@ -135,14 +135,13 @@ export class CodeEditor {
   }
 
   private addLuxonCompletions() {
-    const luxonMethods = Object.getOwnPropertyNames(DateTime.prototype)
-      .filter(method => typeof DateTime.prototype[method] === 'function' && method !== 'constructor');
+    const luxonMethods = Object.getOwnPropertyNames(DateTime.prototype).filter(method => typeof DateTime.prototype[method] === 'function' && method !== 'constructor');
 
     const luxonCompletions = luxonMethods.map(method => ({
       caption: `DateTime.${method}`,
       snippet: `DateTime.${method}(${this.getMethodParameters(DateTime.prototype[method])})`,
       meta: 'luxon',
-      type: 'snippet'
+      type: 'snippet',
     }));
 
     return luxonCompletions;
@@ -164,20 +163,26 @@ export class CodeEditor {
               caption: `obj["${attr.split('.').slice(1).join('.')}"]`,
               snippet: `obj["${attr.split('.').slice(1).join('.')}"]`,
               meta: 'attribute',
-              type: 'snippet'
+              type: 'snippet',
             });
           } else {
             completions.push({
               caption: `${attr}`,
               snippet: `${attr}`,
               meta: 'attribute',
-              type: 'snippet'
+              type: 'snippet',
             });
             completions.push({
-              caption: `${attr.split('.').map(a => `["${a}"]`).join('')}`,
-              snippet: `${attr.split('.').map(a => `["${a}"]`).join('')}`,
+              caption: `${attr
+                .split('.')
+                .map(a => `["${a}"]`)
+                .join('')}`,
+              snippet: `${attr
+                .split('.')
+                .map(a => `["${a}"]`)
+                .join('')}`,
               meta: 'attribute',
-              type: 'snippet'
+              type: 'snippet',
             });
           }
         });
@@ -186,28 +191,28 @@ export class CodeEditor {
           caption: 'func.pkFromBus',
           snippet: 'await func.pkFromBus({ subscriptionUuid: ` `, uuid: ` `, path: ` ` });',
           meta: 'entity translator',
-          type: 'snippet'
-        })
+          type: 'snippet',
+        });
         completions.push({
           caption: 'func.pkToBus',
           snippet: 'await func.pkToBus({ subscriptionUuid: ` `, exchangeUuid: ` `, modulePk: ` `, exchangeCode: ` ` });',
           meta: 'entity translator',
-          type: 'snippet'
-        })
+          type: 'snippet',
+        });
 
         const extendedCompletions = this.addLuxonCompletions();
 
         completions.push(...extendedCompletions);
 
         callback(null, completions);
-      }
+      },
     };
 
     editor.completers = [
       customCompleter,
       ace.require('ace/ext/language_tools').textCompleter,
       ace.require('ace/ext/language_tools').snippetCompleter,
-      ace.require('ace/ext/language_tools').keyWordCompleter
+      ace.require('ace/ext/language_tools').keyWordCompleter,
     ];
   }
 
@@ -234,7 +239,7 @@ export class CodeEditor {
             row: row,
             column: match.index,
             text: `Invalid attribute "${attr}" on obj`,
-            type: 'error'
+            type: 'error',
           });
         }
       }
@@ -252,11 +257,12 @@ export class CodeEditor {
   private combineAnnotations(existingAnnotations, customAnnotations) {
     const combinedAnnotations = [...existingAnnotations];
     customAnnotations.forEach(customAnnotation => {
-      const exists = combinedAnnotations.some(annotation =>
-        annotation.row === customAnnotation.row &&
-        annotation.column === customAnnotation.column &&
-        annotation.text === customAnnotation.text &&
-        annotation.type === customAnnotation.type
+      const exists = combinedAnnotations.some(
+        annotation =>
+          annotation.row === customAnnotation.row &&
+          annotation.column === customAnnotation.column &&
+          annotation.text === customAnnotation.text &&
+          annotation.type === customAnnotation.type,
       );
       if (!exists) {
         combinedAnnotations.push(customAnnotation);

@@ -8,7 +8,7 @@ export type CustomTabulatorColumn = ColumnDefinition & {
   objectKeyProp?: string;
   modalFieldGroup?: string;
   editorReadOnly?: ((cell: CellComponent) => boolean) | boolean;
-  editor?: Editor | 'markdown' | 'password' | 'input' | 'select' | 'autocomplete' | 'code' | 'float' ;
+  editor?: Editor | 'markdown' | 'password' | 'input' | 'select' | 'autocomplete' | 'code' | 'float';
   obj?: any;
   type?: 'array'
 }

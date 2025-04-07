@@ -1,4 +1,4 @@
-import {  CellComponent, RowComponent } from "tabulator-tables";
+import { CellComponent, RowComponent } from "tabulator-tables";
 
 // export function format(first: string, middle: string, last: string): string {
 //   return (first || '') + (middle ? ` ${middle}` : '') + (last ? ` ${last}` : '');
@@ -21,7 +21,7 @@ export class CellHelper {
     // console.debug(ctValue);
     // console.debug(initialValue);
     // console.debug(ctValue == initialValue);
-    return ctValue != initialValue ;
+    return ctValue != initialValue;
   }
 }
 

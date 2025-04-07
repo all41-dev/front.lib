@@ -4,12 +4,10 @@ import { DateTime } from 'luxon';
 import hd from 'humanize-duration';
 import cronParser from 'cron-parser';
 
-
 @Component({
   tag: 'schedule-button',
   shadow: false,
   styleUrl: 'schedule-button.css',
-
 })
 export class ShowSchedule {
   @State() scheduledPopover: bootstrap.Popover;
@@ -81,9 +79,13 @@ export class ShowSchedule {
         data-bs-toggle="popover"
         title="Scheduled for"
         data-bs-html="true"
-        data-bs-content={isScheduled ? `Polling Schedule: ${this.schedule}<br>Next Polling is ${
-          this.getNextPolling(this.schedule).formattedDuration
-        }<br>Next Polling Date and Time: ${this.getNextPolling(this.schedule).nextPollingDateTime}` : 'Not scheduled'}
+        data-bs-content={
+          isScheduled
+            ? `Polling Schedule: ${this.schedule}<br>Next Polling is ${this.getNextPolling(this.schedule).formattedDuration}<br>Next Polling Date and Time: ${
+                this.getNextPolling(this.schedule).nextPollingDateTime
+              }`
+            : 'Not scheduled'
+        }
         disabled={!isScheduled}
       >
         {isScheduled ? 'Scheduled' : 'Not scheduled'}
