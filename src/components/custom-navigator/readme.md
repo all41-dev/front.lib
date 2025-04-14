@@ -12,6 +12,7 @@
 | `defaultTab`  | `default-tab` |             | `number`                                                          | `0`         |
 | `label`       | `label`       |             | `string`                                                          | `undefined` |
 | `navElements` | --            |             | `{ labelHtml: string; contentHtml: any; linkString?: string; }[]` | `undefined` |
+| `uuid`        | `uuid`        |             | `string`                                                          | `undefined` |
 
 
 ## Dependencies

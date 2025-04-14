@@ -20,6 +20,7 @@ export namespace Components {
         "defaultTab": number;
         "label"?: string;
         "navElements": { labelHtml: string; contentHtml: any; linkString?: string }[];
+        "uuid"?: string;
     }
     interface CustomTabulator {
         "actionButtonTags": (string | { tag: string; props: any })[];
@@ -206,6 +207,7 @@ declare namespace LocalJSX {
         "defaultTab"?: number;
         "label"?: string;
         "navElements"?: { labelHtml: string; contentHtml: any; linkString?: string }[];
+        "uuid"?: string;
     }
     interface CustomTabulator {
         "actionButtonTags"?: (string | { tag: string; props: any })[];

@@ -8,6 +8,7 @@ import * as bootstrap from 'bootstrap';
 })
 export class CustomNavigators {
   @Element() el: HTMLElement;
+  @Prop() uuid?: string;
   @Prop() navElements: { labelHtml: string; contentHtml: any; linkString?: string }[];
   @Prop() defaultTab: number = 0;
   @Prop() label?: string;
@@ -92,7 +93,7 @@ export class CustomNavigators {
     const baseUrl = currentUrl.split('/').slice(0, 4).join('/');
 
     if (linkString) {
-      const newUrl = `${baseUrl}/${linkString}`;
+      const newUrl = this.uuid ? `${baseUrl}/${this.uuid}/${linkString}` : `${baseUrl}/${linkString}`;
       window.history.pushState({}, '', newUrl);
     }
   }
