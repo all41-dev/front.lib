@@ -69,6 +69,8 @@ export namespace Components {
     }
     interface TestMarkdown {
     }
+    interface TestRoot {
+    }
 }
 export interface CodeEditorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -182,6 +184,12 @@ declare global {
         prototype: HTMLTestMarkdownElement;
         new (): HTMLTestMarkdownElement;
     };
+    interface HTMLTestRootElement extends Components.TestRoot, HTMLStencilElement {
+    }
+    var HTMLTestRootElement: {
+        prototype: HTMLTestRootElement;
+        new (): HTMLTestRootElement;
+    };
     interface HTMLElementTagNameMap {
         "code-editor": HTMLCodeEditorElement;
         "custom-navigator": HTMLCustomNavigatorElement;
@@ -193,6 +201,7 @@ declare global {
         "test-custom-navigator": HTMLTestCustomNavigatorElement;
         "test-custom-tabulator": HTMLTestCustomTabulatorElement;
         "test-markdown": HTMLTestMarkdownElement;
+        "test-root": HTMLTestRootElement;
     }
 }
 declare namespace LocalJSX {
@@ -263,6 +272,8 @@ declare namespace LocalJSX {
     }
     interface TestMarkdown {
     }
+    interface TestRoot {
+    }
     interface IntrinsicElements {
         "code-editor": CodeEditor;
         "custom-navigator": CustomNavigator;
@@ -274,6 +285,7 @@ declare namespace LocalJSX {
         "test-custom-navigator": TestCustomNavigator;
         "test-custom-tabulator": TestCustomTabulator;
         "test-markdown": TestMarkdown;
+        "test-root": TestRoot;
     }
 }
 export { LocalJSX as JSX };
@@ -290,6 +302,7 @@ declare module "@stencil/core" {
             "test-custom-navigator": LocalJSX.TestCustomNavigator & JSXBase.HTMLAttributes<HTMLTestCustomNavigatorElement>;
             "test-custom-tabulator": LocalJSX.TestCustomTabulator & JSXBase.HTMLAttributes<HTMLTestCustomTabulatorElement>;
             "test-markdown": LocalJSX.TestMarkdown & JSXBase.HTMLAttributes<HTMLTestMarkdownElement>;
+            "test-root": LocalJSX.TestRoot & JSXBase.HTMLAttributes<HTMLTestRootElement>;
         }
     }
 }

@@ -48,6 +48,15 @@ export class TestCustomTabulator {
       },
       { foo: 'raz', uuid: '4284687236' },
     ];
+    /*     const testApiColumns: CustomTabulatorColumn[] = [
+      { title: 'UUID', field: 'uuid', editable: false, editor: 'input', headerFilter: 'input', width: 250 },
+      { title: 'Username', field: 'username', editable: true, editor: 'input', headerFilter: 'input', maxWidth: 150, validator: ['minLength:3', 'required'] as any },
+      { title: 'Email', field: 'email', editable: true, editor: 'input', headerFilter: 'input', width: 250, validator: ['email', 'required'] as any },
+      { title: 'First Name', field: 'firstName', editable: true, editor: 'input', headerFilter: 'input', maxWidth: 150 },
+      { title: 'Last Name', field: 'lastName', editable: true, editor: 'input', headerFilter: 'input', maxWidth: 150 },
+      { title: 'Auth UUID', field: 'auth_uuid', editable: false, editor: 'input', headerFilter: 'input', width: 250 },
+      { title: 'Provider', field: 'provider', editable: true, editor: 'tickCross', headerFilter: 'input', width: 100 },
+    ]; */
     return (
       <Host>
         <custom-tabulator
@@ -62,6 +71,16 @@ export class TestCustomTabulator {
           data={data}
           columns={columns}
         ></custom-tabulator>
+        {/* <custom-tabulator
+          id="foo"
+          name="test-foo"
+          componentTitle="component title"
+          readOnly={false}
+          route="users"
+          editionMode={'side'}
+          height={500}
+          columns={testApiColumns}
+        ></custom-tabulator> */}
         {/* <custom-tabulator name='test2' readOnly={false} route='modules' isTree={true} isModal={false} height={250}
           data={JSON.parse(JSON.stringify(data))}
           columns={JSON.parse(JSON.stringify(columns))}// need a copy as first sanple would impact second and vice-versa

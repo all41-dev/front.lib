@@ -329,6 +329,60 @@ export class CustomTabulator {
         this.options.data = this.data;
       } else {
         this.options.ajaxURL = `${Env.apiUrl}/${this.route}`;
+        this.options.ajaxRequestFunc
+          ? this.options.ajaxRequestFunc
+          : (this.options.ajaxRequestFunc = async function (url, config, params) {
+              try {
+                let response = await fetch(url, {
+                  method: config.method || 'GET',
+                  headers: config.headers || {},
+                  body: config.method === 'POST' ? JSON.stringify(params) : null,
+                });
+                if (response.status === 403) {
+                  Swal.fire({
+                    position: 'top-end',
+                    toast: true,
+                    icon: 'error',
+                    title: 'Forbidden',
+                    text: 'Access forbidden to the resource.',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                  });
+                  return [];
+                }
+                if (response.status === 401) {
+                  Swal.fire({
+                    position: 'top-end',
+                    toast: true,
+                    icon: 'warning',
+                    title: 'Unauthorized',
+                    text: 'Access not authorized to the resource.',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                  });
+                  return [];
+                }
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+              } catch (error) {
+                console.error('AJAX Request Error:', error);
+                Swal.fire({
+                  position: 'top-end',
+                  toast: true,
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'An error occurred while loading data.',
+                  timer: 3000,
+                  timerProgressBar: true,
+                  showConfirmButton: false,
+                });
+                return [];
+              }
+            });
       }
       this.tabulatorComponent = new TabulatorFull(`#${this.name}`, {
         ...this.options,

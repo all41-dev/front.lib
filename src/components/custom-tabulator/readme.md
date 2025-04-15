@@ -57,7 +57,7 @@
 
 | Name  | Type                                                                                                                                                                                                                                                                                                                                                                                               | Description |
 | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `col` | `ColumnDefinition & { required?: boolean; createOnly?: boolean; updateOnly?: boolean; hideInModal?: boolean \| ((cell: CellComponent) => boolean); objectKeyProp?: string; modalFieldGroup?: string; editorReadOnly?: boolean \| ((cell: CellComponent) => boolean); editor?: "code" \| "select" \| "autocomplete" \| Editor \| "float" \| "markdown" \| "password"; obj?: any; type?: "array"; }` |             |
+| `col` | `ColumnDefinition & { required?: boolean; createOnly?: boolean; updateOnly?: boolean; hideInModal?: boolean \| ((cell: CellComponent) => boolean); objectKeyProp?: string; modalFieldGroup?: string; editorReadOnly?: boolean \| ((cell: CellComponent) => boolean); editor?: Editor \| "markdown" \| "password" \| "select" \| "autocomplete" \| "code" \| "float"; obj?: any; type?: "array"; }` |             |
 
 #### Returns
 
