@@ -28,7 +28,7 @@ export class MarkdownPreview {
     if (typeof window !== 'undefined' && !window['marked']) {
       const script = document.createElement('script');
       // script.src = 'https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.1/marked.min.js';
-      script.src = '/assets/marked.js';
+      script.src = '/front//assets/marked.js';
       script.onload = () => {
         console.log(window['marked']);
         this.marked = window['marked'];

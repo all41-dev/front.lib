@@ -1,4 +1,4 @@
-import { Component, State, h } from '@stencil/core';
+import { Component, h } from '@stencil/core';
 
 @Component({
   tag: 'test-root',
@@ -6,9 +6,6 @@ import { Component, State, h } from '@stencil/core';
   shadow: false,
 })
 export class TestRoot {
-  @State() isUnitTest: boolean = true;
-  @State() selectedSubscription;
-
   public markdown = '# SpiderTruck';
 
   componentWillLoad() {
@@ -22,7 +19,7 @@ export class TestRoot {
           <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container-fluid">
               <a class="navbar-brand" href="/">
-                App Name
+                Test Root
               </a>
               <button
                 class="navbar-toggler"
