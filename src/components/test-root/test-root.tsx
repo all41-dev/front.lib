@@ -49,6 +49,31 @@ export class TestRoot {
                       Custom Navigator
                     </a>
                   </li>
+                  <li class="nav-item dropdown">
+                    <div class="dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownServer" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Test Dropdown
+                      </a>
+
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li>
+                          <a class="dropdown-item" href="#">
+                            Test 1
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="#">
+                            Test 2
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="#">
+                            Test 3
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
                 </ul>
               </div>
             </div>

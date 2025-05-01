@@ -1,6 +1,7 @@
 import { Component, h, Prop, Watch } from '@stencil/core';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
+import { Dropdown } from 'bootstrap';
 
 @Component({
   tag: 'markdown-preview',
@@ -38,6 +39,13 @@ export class MarkdownPreview {
     } else {
       this.marked = window['marked'];
       this.renderMarkdown();
+      document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(el => {
+        try {
+          new Dropdown(el);
+        } catch (err) {
+          console.error('Failed to initialize dropdown:', err);
+        }
+      });
     }
   }
 
