@@ -1,4 +1,5 @@
 import { CellComponent, RowComponent } from "tabulator-tables";
+import Swal from 'sweetalert2';
 
 // export function format(first: string, middle: string, last: string): string {
 //   return (first || '') + (middle ? ` ${middle}` : '') + (last ? ` ${last}` : '');
@@ -38,4 +39,37 @@ export function clearStatusClasses(rowElement) {
   rowElement.classList.remove('warn-row');
   rowElement.classList.remove('error-row');
   rowElement.classList.remove('offline-row');
+}
+
+export function checkResponseStatus(response: Response) {
+  if (response.status === 403) {
+    Swal.fire({
+      position: 'top-end',
+      toast: true,
+      icon: 'error',
+      title: 'Forbidden',
+      text: 'Access forbidden to the resource.',
+      timer: 3000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
+    return [];
+  }
+  if (response.status === 401) {
+    Swal.fire({
+      position: 'top-end',
+      toast: true,
+      icon: 'warning',
+      title: 'Unauthorized',
+      text: 'Access not authorized to the resource.',
+      timer: 3000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
+    return [];
+  }
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
 }

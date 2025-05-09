@@ -1,7 +1,7 @@
 import { Build, Component, Event, Prop, Env, EventEmitter, State, JSX, Method, h, Listen } from '@stencil/core';
 import { TabulatorFull, RowComponent, CellComponent, Options, FormatterParams, DownloadType, DownloadOptions } from 'tabulator-tables';
 import * as bootstrap from 'bootstrap';
-import { CellHelper, HtmlHelper, RowHelper } from '../../utils/utils';
+import { CellHelper, checkResponseStatus, HtmlHelper, RowHelper } from '../../utils/utils';
 import { CustomTabulatorColumn, CustomTabulatorRecMatching } from '../../interfaces/custom-tabulator.types';
 import { singular } from 'pluralize';
 import { DateTime } from 'luxon';
@@ -338,36 +338,7 @@ export class CustomTabulator {
                   headers: config.headers || {},
                   body: config.method === 'POST' ? JSON.stringify(params) : null,
                 });
-                if (response.status === 403) {
-                  Swal.fire({
-                    position: 'top-end',
-                    toast: true,
-                    icon: 'error',
-                    title: 'Forbidden',
-                    text: 'Access forbidden to the resource.',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                  });
-                  return [];
-                }
-                if (response.status === 401) {
-                  Swal.fire({
-                    position: 'top-end',
-                    toast: true,
-                    icon: 'warning',
-                    title: 'Unauthorized',
-                    text: 'Access not authorized to the resource.',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                  });
-                  return [];
-                }
-                if (!response.ok) {
-                  throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
+                return checkResponseStatus(response);
               } catch (error) {
                 console.error('AJAX Request Error:', error);
                 Swal.fire({
@@ -610,54 +581,53 @@ export class CustomTabulator {
       },
       body: JSON.stringify(data),
     })
-      .then(res =>
-        res
-          .json()
-          .then(async json => {
-            // console.debug(json);
+      .then(async res => {
+        // console.debug(json);
+        const json = checkResponseStatus(res);
+        // console.debug(this.idPropName);
+        // The Api must returns a JSON so we can get the id correctly update the Table
+        if (typeof json !== 'object' || !json[this.idPropName]) throw new Error('object was not returned');
+        Object.assign(data, json);
+        row.reformat();
+        // await new Promise((resolve: (val: any) => any, _reject: (msg) => void) => {
+        //   setTimeout(() => {
+        //     resolve('a');
+        //   }, 1000);
+        // });
+        // reset initial values as object is in sync with the server
+        data.__initialValues = {};
+        this.rowFormater(row);
+        row.getCells().forEach(c => {
+          // c.cancelEdit();
+          c.clearEdited();
+          const cellObj = (c as any)._cell;
+          cellObj.initialValue = c.getValue();
+          c.getElement().style.backgroundColor = 'inherit';
+          this.cellEdited(c);
+        });
+        const detailContainer = document.getElementById(`${this.name}-detail-container`);
+        this.resetFormElementStyles(detailContainer);
 
-            // console.debug(this.idPropName);
-            // The Api must returns a JSON so we can get the id correctly update the Table
-            if (typeof json !== 'object' || !json[this.idPropName]) throw new Error('object was not returned');
-            Object.assign(data, json);
-            row.reformat();
-            // await new Promise((resolve: (val: any) => any, _reject: (msg) => void) => {
-            //   setTimeout(() => {
-            //     resolve('a');
-            //   }, 1000);
-            // });
-            // reset initial values as object is in sync with the server
-            data.__initialValues = {};
-            this.rowFormater(row);
-            row.getCells().forEach(c => {
-              // c.cancelEdit();
-              c.clearEdited();
-              const cellObj = (c as any)._cell;
-              cellObj.initialValue = c.getValue();
-              c.getElement().style.backgroundColor = 'inherit';
-              this.cellEdited(c);
-            });
-            const detailContainer = document.getElementById(`${this.name}-detail-container`);
-            this.resetFormElementStyles(detailContainer);
-
-            this.rowSaved.emit({ rows: [row], componentName: this.name });
-            if (isNew) {
-              if (this.treeConfig && row.getData()[this.treeConfig.parentField]) {
-                // is a child
-                const parentRow = row.getTreeParent();
-                if (!parentRow) throw new Error('Child row has no parent... should not happen');
-                this.cellEdited(parentRow.getCells()[1]);
-              } else {
-                // is a root
-                !this.tabEndNewRow ? '' : this.tabulatorComponent.addRow([this.rowDefault ? JSON.parse(JSON.stringify(this.rowDefault)) : {}]);
-              }
-            }
-          })
-          .catch(err => {
-            throw err;
-          }),
-      )
+        this.rowSaved.emit({ rows: [row], componentName: this.name });
+        if (isNew) {
+          if (this.treeConfig && row.getData()[this.treeConfig.parentField]) {
+            // is a child
+            const parentRow = row.getTreeParent();
+            if (!parentRow) throw new Error('Child row has no parent... should not happen');
+            this.cellEdited(parentRow.getCells()[1]);
+          } else {
+            // is a root
+            !this.tabEndNewRow ? '' : this.tabulatorComponent.addRow([this.rowDefault ? JSON.parse(JSON.stringify(this.rowDefault)) : {}]);
+          }
+        }
+      })
       .catch(err => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Saving Failed',
+          text: err.message || 'An unexpected error occurred while deleting the record.',
+        });
+        console.error('Error deleting row:', err);
         throw err;
       });
   }
