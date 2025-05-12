@@ -581,45 +581,52 @@ export class CustomTabulator {
       },
       body: JSON.stringify(data),
     })
-      .then(async res => {
-        // console.debug(json);
-        const json = checkResponseStatus(res);
-        // console.debug(this.idPropName);
-        // The Api must returns a JSON so we can get the id correctly update the Table
-        if (typeof json !== 'object' || !json[this.idPropName]) throw new Error('object was not returned');
-        Object.assign(data, json);
-        row.reformat();
-        // await new Promise((resolve: (val: any) => any, _reject: (msg) => void) => {
-        //   setTimeout(() => {
-        //     resolve('a');
-        //   }, 1000);
-        // });
-        // reset initial values as object is in sync with the server
-        data.__initialValues = {};
-        this.rowFormater(row);
-        row.getCells().forEach(c => {
-          // c.cancelEdit();
-          c.clearEdited();
-          const cellObj = (c as any)._cell;
-          cellObj.initialValue = c.getValue();
-          c.getElement().style.backgroundColor = 'inherit';
-          this.cellEdited(c);
-        });
-        const detailContainer = document.getElementById(`${this.name}-detail-container`);
-        this.resetFormElementStyles(detailContainer);
-
-        this.rowSaved.emit({ rows: [row], componentName: this.name });
-        if (isNew) {
-          if (this.treeConfig && row.getData()[this.treeConfig.parentField]) {
-            // is a child
-            const parentRow = row.getTreeParent();
-            if (!parentRow) throw new Error('Child row has no parent... should not happen');
-            this.cellEdited(parentRow.getCells()[1]);
-          } else {
-            // is a root
-            !this.tabEndNewRow ? '' : this.tabulatorComponent.addRow([this.rowDefault ? JSON.parse(JSON.stringify(this.rowDefault)) : {}]);
-          }
+      .then(res => {
+        if (res.status === 403) {
+          throw new Error(`Access forbidden to the resource.`);
+        } else if (res.status === 401) {
+          throw new Error(`Access not authorized to the resource.`);
+        } else if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
+        res.json().then(async json => {
+          // console.debug(this.idPropName);
+          // The Api must returns a JSON so we can get the id correctly update the Table
+          if (typeof json !== 'object' || !json[this.idPropName]) throw new Error('object was not returned');
+          Object.assign(data, json);
+          row.reformat();
+          // await new Promise((resolve: (val: any) => any, _reject: (msg) => void) => {
+          //   setTimeout(() => {
+          //     resolve('a');
+          //   }, 1000);
+          // });
+          // reset initial values as object is in sync with the server
+          data.__initialValues = {};
+          this.rowFormater(row);
+          row.getCells().forEach(c => {
+            // c.cancelEdit();
+            c.clearEdited();
+            const cellObj = (c as any)._cell;
+            cellObj.initialValue = c.getValue();
+            c.getElement().style.backgroundColor = 'inherit';
+            this.cellEdited(c);
+          });
+          const detailContainer = document.getElementById(`${this.name}-detail-container`);
+          this.resetFormElementStyles(detailContainer);
+
+          this.rowSaved.emit({ rows: [row], componentName: this.name });
+          if (isNew) {
+            if (this.treeConfig && row.getData()[this.treeConfig.parentField]) {
+              // is a child
+              const parentRow = row.getTreeParent();
+              if (!parentRow) throw new Error('Child row has no parent... should not happen');
+              this.cellEdited(parentRow.getCells()[1]);
+            } else {
+              // is a root
+              !this.tabEndNewRow ? '' : this.tabulatorComponent.addRow([this.rowDefault ? JSON.parse(JSON.stringify(this.rowDefault)) : {}]);
+            }
+          }
+        });
       })
       .catch(err => {
         Swal.fire({
