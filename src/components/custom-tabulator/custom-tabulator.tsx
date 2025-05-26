@@ -585,6 +585,11 @@ export class CustomTabulator {
         if (res.status === 403) {
           throw new Error(`Access forbidden to the resource.`);
         } else if (res.status === 401) {
+          const provider = document.cookie
+            .split(';')
+            .map(cookie => cookie.trim().split('='))
+            .find(([name]) => name === 'provider')?.[1];
+          window.open(provider ? `${Env.authUrl}/${provider}?` : `${Env.rootPath}login`, 'authWindow');
           throw new Error(`Access not authorized to the resource.`);
         } else if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);

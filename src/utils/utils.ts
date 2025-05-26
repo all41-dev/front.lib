@@ -1,5 +1,6 @@
 import { CellComponent, RowComponent } from "tabulator-tables";
 import Swal from 'sweetalert2';
+import { Env } from "@stencil/core";
 
 // export function format(first: string, middle: string, last: string): string {
 //   return (first || '') + (middle ? ` ${middle}` : '') + (last ? ` ${last}` : '');
@@ -66,6 +67,13 @@ export function checkResponseStatus(response: Response) {
       timerProgressBar: true,
       showConfirmButton: false,
     });
+    const provider = document.cookie.split(';')
+      .map(cookie => cookie.trim().split('='))
+      .find(([name]) => name === 'provider')?.[1];
+    window.open(
+      provider ? `${Env.authUrl}/${provider}?` : `${Env.rootPath}login`,
+      'authWindow'
+    );
     return [];
   }
   if (!response.ok) {
