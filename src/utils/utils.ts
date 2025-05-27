@@ -71,9 +71,11 @@ export function checkResponseStatus(response: Response) {
       .map(cookie => cookie.trim().split('='))
       .find(([name]) => name === 'provider')?.[1];
     window.open(
-      provider ? `${Env.authUrl}/${provider}?` : `${Env.rootPath}login`,
-      'authWindow'
+      provider ? `${Env.authUrl}/${provider}` : `${Env.rootPath}login`,
+      'authWindow',
+      'width=600,height=400'
     );
+    window.opener?.postMessage({ type: 'auth-popup' }, '*');
     return [];
   }
   if (!response.ok) {

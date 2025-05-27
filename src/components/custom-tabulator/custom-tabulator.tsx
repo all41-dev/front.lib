@@ -589,7 +589,8 @@ export class CustomTabulator {
             .split(';')
             .map(cookie => cookie.trim().split('='))
             .find(([name]) => name === 'provider')?.[1];
-          window.open(provider ? `${Env.authUrl}/${provider}?` : `${Env.rootPath}login`, 'authWindow');
+          window.open(provider ? `${Env.authUrl}/${provider}` : `${Env.rootPath}login`, 'authWindow', 'width=600,height=400');
+          window.opener?.postMessage({ type: 'auth-popup' }, '*');
           throw new Error(`Access not authorized to the resource.`);
         } else if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -659,6 +660,14 @@ export class CustomTabulator {
           .then(async response => {
             if (!response.ok) {
               const errorText = await response.text();
+              if (response.status === 401) {
+                const provider = document.cookie
+                  .split(';')
+                  .map(cookie => cookie.trim().split('='))
+                  .find(([name]) => name === 'provider')?.[1];
+                window.open(provider ? `${Env.authUrl}/${provider}` : `${Env.rootPath}login`, 'authWindow', 'width=600,height=400');
+                window.opener?.postMessage({ type: 'auth-popup' }, '*');
+              }
               throw new Error(errorText || response.statusText);
             }
           })
