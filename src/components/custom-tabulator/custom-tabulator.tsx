@@ -585,13 +585,11 @@ export class CustomTabulator {
         if (res.status === 403) {
           throw new Error(`Access forbidden to the resource.`);
         } else if (res.status === 401) {
-          const provider = decodeURIComponent(
-            document.cookie
-              .split(';')
-              .map(cookie => cookie.trim().split('='))
-              .find(([name]) => name === 'provider')?.[1],
-          );
-          window.open(provider ? `${Env.authUrl}/${provider}` : `${Env.rootPath}login`, 'authWindow', 'width=600,height=400');
+          const provider = document.cookie
+            .split(';')
+            .map(cookie => cookie.trim().split('='))
+            .find(([name]) => name === 'provider')?.[1];
+          window.open(provider ? `${Env.authUrl}/${decodeURIComponent(provider)}` : `${Env.rootPath}login`, 'authWindow', 'width=600,height=400');
           window.opener?.postMessage({ type: 'auth-popup' }, '*');
           throw new Error(`Access not authorized to the resource.`);
         } else if (!res.ok) {
@@ -663,13 +661,11 @@ export class CustomTabulator {
             if (!response.ok) {
               const errorText = await response.text();
               if (response.status === 401) {
-                const provider = decodeURIComponent(
-                  document.cookie
-                    .split(';')
-                    .map(cookie => cookie.trim().split('='))
-                    .find(([name]) => name === 'provider')?.[1],
-                );
-                window.open(provider ? `${Env.authUrl}/${provider}` : `${Env.rootPath}login`, 'authWindow', 'width=600,height=400');
+                const provider = document.cookie
+                  .split(';')
+                  .map(cookie => cookie.trim().split('='))
+                  .find(([name]) => name === 'provider')?.[1];
+                window.open(provider ? `${Env.authUrl}/${decodeURIComponent(provider)}` : `${Env.rootPath}login`, 'authWindow', 'width=600,height=400');
                 window.opener?.postMessage({ type: 'auth-popup' }, '*');
               }
               throw new Error(errorText || response.statusText);
