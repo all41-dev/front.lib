@@ -67,9 +67,9 @@ export function checkResponseStatus(response: Response) {
       timerProgressBar: true,
       showConfirmButton: false,
     });
-    const provider = document.cookie.split(';')
+    const provider = decodeURIComponent(document.cookie.split(';')
       .map(cookie => cookie.trim().split('='))
-      .find(([name]) => name === 'provider')?.[1];
+      .find(([name]) => name === 'provider')?.[1]);
     window.open(
       provider ? `${Env.authUrl}/${provider}` : `${Env.rootPath}login`,
       'authWindow',
