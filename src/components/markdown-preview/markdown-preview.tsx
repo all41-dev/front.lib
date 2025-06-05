@@ -31,7 +31,7 @@ export class MarkdownPreview {
       // script.src = 'https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.1/marked.min.js';
       script.src = '/front//assets/marked.js';
       script.onload = () => {
-        console.log(window['marked']);
+        // console.log(window['marked']);
         this.marked = window['marked'];
         this.renderMarkdown();
       };
