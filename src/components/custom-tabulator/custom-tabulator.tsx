@@ -347,12 +347,19 @@ export class CustomTabulator {
       this.tabulatorComponent.on('tableBuilt', () => {
         this.tableBuilt.emit({ table: { tabulatorInstance: this.tabulatorComponent }, componentName: this.name });
       });
-      this.tabulatorComponent.on('dataLoadError', function (error) {
+      this.tabulatorComponent.on('dataLoadError', async function (error: any) {
         try {
-          console.log('Error loading data:', error);
+          console.log('Error status:', error.status);
+          console.log('Error message:', error.statusText);
+          console.log('Error URL:', error.url);
+
+          if (error.status === 401 && typeof error.text === 'function') {
+            const responseBody = await error.text();
+            console.log('Response body:', responseBody);
+          }
           handleError(error);
-        } catch (error) {
-          console.error('Unhandled error during data load:', error);
+        } catch (err) {
+          console.error('Unhandled error during data load:', err);
         }
       });
       this.tabulatorComponent.on('dataLoadError', (error: Error) => {
