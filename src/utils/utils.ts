@@ -42,8 +42,9 @@ export function clearStatusClasses(rowElement) {
   rowElement.classList.remove('offline-row');
 }
 
-export function handleError(error: Error) {
-  if (error.message.includes("403")) {
+export function handleError(error: any) {
+  console.error("Error:", JSON.stringify(error));
+  if (error.status === "403") {
     Swal.fire({
       position: 'top-end',
       toast: true,
@@ -54,7 +55,7 @@ export function handleError(error: Error) {
       timerProgressBar: true,
       showConfirmButton: false,
     });
-  } else if (error.message.includes("401")) {
+  } else if (error.status === "401") {
     Swal.fire({
       position: 'top-end',
       toast: true,
