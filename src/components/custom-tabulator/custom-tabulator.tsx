@@ -349,15 +349,7 @@ export class CustomTabulator {
       });
       this.tabulatorComponent.on('dataLoadError', async function (error: any) {
         try {
-          console.log('Error status:', error.status);
-          console.log('Error message:', error.statusText);
-          console.log('Error URL:', error.url);
-
-          if (error.status === 401 && typeof error.text === 'function') {
-            const responseBody = await error.text();
-            console.log('Response body:', responseBody);
-          }
-          handleError(error);
+          handleError(error, error.status, error.statusText);
         } catch (err) {
           console.error('Unhandled error during data load:', err);
         }
