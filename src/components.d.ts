@@ -113,6 +113,7 @@ declare global {
         "rows": { rows: RowComponent[]; componentName: string };
         "loadedTable": { table: CustomTabulatorRecMatching; componentName: string };
         "tableBuilt": { table: CustomTabulatorRecMatching; componentName: string };
+        "dataLoadError": { response: Response; componentName: string };
         "rowDeleted": { row: RowComponent; componentName: string };
         "rowSaved": { rows: RowComponent[]; componentName: string };
         "rowEditionButtonClicked": { row: RowComponent; componentName: string };
@@ -232,6 +233,7 @@ declare namespace LocalJSX {
         "index"?: string;
         "isDeletionPermited"?: boolean;
         "name": string;
+        "onDataLoadError"?: (event: CustomTabulatorCustomEvent<{ response: Response; componentName: string }>) => void;
         "onLoadedTable"?: (event: CustomTabulatorCustomEvent<{ table: CustomTabulatorRecMatching; componentName: string }>) => void;
         "onRowDeleted"?: (event: CustomTabulatorCustomEvent<{ row: RowComponent; componentName: string }>) => void;
         "onRowEditionButtonClicked"?: (event: CustomTabulatorCustomEvent<{ row: RowComponent; componentName: string }>) => void;

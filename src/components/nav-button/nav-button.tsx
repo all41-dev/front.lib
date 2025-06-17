@@ -13,7 +13,7 @@ export class NavButton {
   render() {
     return (
       <a href={this.href}>
-        <button class="btn btn-outline-primary me-2 ellipsis-button" type="button" id="button-addon1" title={`${this.entityCode} ${this.relatedTo}`}>
+        <button class="btn btn-outline-primary mx-1 ellipsis-button" type="button" id="button-addon1" title={`${this.entityCode} ${this.relatedTo}`}>
           {`${this.relatedTo} ${this.entityCode}`} <i class="bi bi-arrow-right-circle"></i>
         </button>
       </a>

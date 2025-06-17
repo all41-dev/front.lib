@@ -75,7 +75,7 @@ export class ShowSchedule {
         onClick={() => this.showScheduledPopover()}
         type="button"
         id="popover"
-        class="btn btn-outline-secondary"
+        class="btn btn-outline-secondary mx-1"
         data-bs-toggle="popover"
         title="Scheduled for"
         data-bs-html="true"

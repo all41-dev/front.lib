@@ -42,8 +42,8 @@ export function clearStatusClasses(rowElement) {
   rowElement.classList.remove('offline-row');
 }
 
-export function checkResponseStatus(response: Response) {
-  if (response.status === 403) {
+export function handleError(error: Error) {
+  if (error.message.includes("403")) {
     Swal.fire({
       position: 'top-end',
       toast: true,
@@ -54,9 +54,7 @@ export function checkResponseStatus(response: Response) {
       timerProgressBar: true,
       showConfirmButton: false,
     });
-    return [];
-  }
-  if (response.status === 401) {
+  } else if (error.message.includes("401")) {
     Swal.fire({
       position: 'top-end',
       toast: true,
@@ -76,10 +74,19 @@ export function checkResponseStatus(response: Response) {
       'width=600,height=400'
     );
     window.opener?.postMessage({ type: 'auth-popup' }, '*');
-    return [];
+  } else {
+    Swal.fire({
+      position: 'top-end',
+      toast: true,
+      icon: 'error',
+      title: 'Error',
+      text: error.message || 'An unknown error occurred.',
+      timer: 3000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
   }
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  if (error.stack) {
+    console.error("Stack Trace:", error.stack);
   }
-  return response.json();
 }

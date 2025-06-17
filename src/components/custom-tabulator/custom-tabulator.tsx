@@ -1,7 +1,7 @@
 import { Build, Component, Event, Prop, Env, EventEmitter, State, JSX, Method, h, Listen } from '@stencil/core';
 import { TabulatorFull, RowComponent, CellComponent, Options, FormatterParams, DownloadType, DownloadOptions } from 'tabulator-tables';
 import * as bootstrap from 'bootstrap';
-import { CellHelper, checkResponseStatus, HtmlHelper, RowHelper } from '../../utils/utils';
+import { CellHelper, handleError, HtmlHelper, RowHelper } from '../../utils/utils';
 import { CustomTabulatorColumn, CustomTabulatorRecMatching } from '../../interfaces/custom-tabulator.types';
 import { singular } from 'pluralize';
 import { DateTime } from 'luxon';
@@ -60,6 +60,7 @@ export class CustomTabulator {
   @Event({ bubbles: true, composed: true }) rowDeleted: EventEmitter<{ row: RowComponent; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowSaved: EventEmitter<{ rows: RowComponent[]; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowEditionButtonClicked: EventEmitter<{ row: RowComponent; componentName: string }>;
+  @Event({ bubbles: true, composed: true }) dataLoadError: EventEmitter<{ error: Error; componentName: string }>;
 
   closeOnSave: boolean = false;
 
@@ -329,31 +330,6 @@ export class CustomTabulator {
         this.options.data = this.data;
       } else {
         this.options.ajaxURL = `${Env.apiUrl}/${this.route}`;
-        this.options.ajaxRequestFunc
-          ? this.options.ajaxRequestFunc
-          : (this.options.ajaxRequestFunc = async function (url, config, params) {
-              try {
-                let response = await fetch(url, {
-                  method: config.method || 'GET',
-                  headers: config.headers || {},
-                  body: config.method === 'POST' ? JSON.stringify(params) : null,
-                });
-                return checkResponseStatus(response);
-              } catch (error) {
-                console.error('AJAX Request Error:', error);
-                Swal.fire({
-                  position: 'top-end',
-                  toast: true,
-                  icon: 'error',
-                  title: 'Error',
-                  text: 'An error occurred while loading data.',
-                  timer: 3000,
-                  timerProgressBar: true,
-                  showConfirmButton: false,
-                });
-                return [];
-              }
-            });
       }
       this.tabulatorComponent = new TabulatorFull(`#${this.name}`, {
         ...this.options,
@@ -370,6 +346,17 @@ export class CustomTabulator {
       });
       this.tabulatorComponent.on('tableBuilt', () => {
         this.tableBuilt.emit({ table: { tabulatorInstance: this.tabulatorComponent }, componentName: this.name });
+      });
+      this.tabulatorComponent.on('dataLoadError', function (error) {
+        try {
+          console.log('Error loading data:', error);
+          handleError(error);
+        } catch (error) {
+          console.error('Unhandled error during data load:', error);
+        }
+      });
+      this.tabulatorComponent.on('dataLoadError', (error: Error) => {
+        this.dataLoadError.emit({ error, componentName: this.name });
       });
       this.tabulatorComponent.on('dataLoaded', data => {
         this.rows.emit({ rows: this.tabulatorComponent.getRows(), componentName: this.name });
