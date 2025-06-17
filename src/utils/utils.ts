@@ -35,13 +35,6 @@ export class HtmlHelper {
   }
 }
 
-export function clearStatusClasses(rowElement) {
-  rowElement.classList.remove('ok-row');
-  rowElement.classList.remove('warn-row');
-  rowElement.classList.remove('error-row');
-  rowElement.classList.remove('offline-row');
-}
-
 export function handleError(error: any) {
   if (error.status === 403) {
     Swal.fire({

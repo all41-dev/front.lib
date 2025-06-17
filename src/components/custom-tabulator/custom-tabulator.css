@@ -45,6 +45,11 @@ h5 {
 .error-row {
   background-color: #FFCCCB !important;
 }
+
+.ok-row {
+  background-color: #d4edda !important;
+}
+
 .tabulator-validation-fail{
   border-color:  #fc0000 !important;
 }
