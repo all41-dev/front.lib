@@ -38,7 +38,7 @@
 
 | Event                     | Description | Type                                                                         |
 | ------------------------- | ----------- | ---------------------------------------------------------------------------- |
-| `dataLoadError`           |             | `CustomEvent<{ error: Error; componentName: string; }>`                      |
+| `dataLoadError`           |             | `CustomEvent<{ error: any; componentName: string; }>`                        |
 | `loadedTable`             |             | `CustomEvent<{ table: CustomTabulatorRecMatching; componentName: string; }>` |
 | `rowDeleted`              |             | `CustomEvent<{ row: RowComponent; componentName: string; }>`                 |
 | `rowEditionButtonClicked` |             | `CustomEvent<{ row: RowComponent; componentName: string; }>`                 |

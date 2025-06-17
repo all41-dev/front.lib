@@ -42,11 +42,8 @@ export function clearStatusClasses(rowElement) {
   rowElement.classList.remove('offline-row');
 }
 
-export function handleError(error, status, message: string) {
-  console.log('Error status:', error.status);
-  console.log('Error message:', error.statusText);
-  console.log('Error URL:', error.url);
-  if (status === 403) {
+export function handleError(error: any) {
+  if (error.status === 403) {
     Swal.fire({
       position: 'top-end',
       toast: true,
@@ -57,7 +54,7 @@ export function handleError(error, status, message: string) {
       timerProgressBar: true,
       showConfirmButton: false,
     });
-  } else if (status === 401) {
+  } else if (error.status === 401) {
     Swal.fire({
       position: 'top-end',
       toast: true,
@@ -83,7 +80,7 @@ export function handleError(error, status, message: string) {
       toast: true,
       icon: 'error',
       title: 'Error',
-      text: message || 'An unknown error occurred.',
+      text: error.message || 'An unknown error occurred.',
       timer: 3000,
       timerProgressBar: true,
       showConfirmButton: false,

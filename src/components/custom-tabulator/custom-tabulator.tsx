@@ -60,7 +60,7 @@ export class CustomTabulator {
   @Event({ bubbles: true, composed: true }) rowDeleted: EventEmitter<{ row: RowComponent; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowSaved: EventEmitter<{ rows: RowComponent[]; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowEditionButtonClicked: EventEmitter<{ row: RowComponent; componentName: string }>;
-  @Event({ bubbles: true, composed: true }) dataLoadError: EventEmitter<{ error: Error; componentName: string }>;
+  @Event({ bubbles: true, composed: true }) dataLoadError: EventEmitter<{ error: any; componentName: string }>;
 
   closeOnSave: boolean = false;
 
@@ -349,12 +349,12 @@ export class CustomTabulator {
       });
       this.tabulatorComponent.on('dataLoadError', async function (error: any) {
         try {
-          handleError(error, error.status, error.statusText);
+          handleError(error);
         } catch (err) {
           console.error('Unhandled error during data load:', err);
         }
       });
-      this.tabulatorComponent.on('dataLoadError', (error: Error) => {
+      this.tabulatorComponent.on('dataLoadError', (error: any) => {
         this.dataLoadError.emit({ error, componentName: this.name });
       });
       this.tabulatorComponent.on('dataLoaded', data => {
