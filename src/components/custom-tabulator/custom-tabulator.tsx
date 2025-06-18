@@ -61,6 +61,7 @@ export class CustomTabulator {
   @Event({ bubbles: true, composed: true }) rowSaved: EventEmitter<{ rows: RowComponent[]; componentName: string }>;
   @Event({ bubbles: true, composed: true }) rowEditionButtonClicked: EventEmitter<{ row: RowComponent; componentName: string }>;
   @Event({ bubbles: true, composed: true }) dataLoadError: EventEmitter<{ error: any; componentName: string }>;
+  @Event({ bubbles: true, composed: true }) dataProcessed: EventEmitter<{ data: any[]; componentName: string }>;
 
   closeOnSave: boolean = false;
 
@@ -365,6 +366,10 @@ export class CustomTabulator {
           data.push(this.rowDefault ? JSON.parse(JSON.stringify(this.rowDefault)) : {});
         }
         this.loadedTable.emit({ table: { tabulatorInstance: this.tabulatorComponent }, componentName: this.name });
+      });
+      this.tabulatorComponent.on('dataProcessed', () => {
+        const filteredData = this.tabulatorComponent.getData('active');
+        this.dataProcessed.emit({ data: filteredData, componentName: this.name });
       });
       this.tabulatorComponent.on('cellEdited', (cell: CellComponent) => {
         // store "real" initial value of field that survives row.reformat()
