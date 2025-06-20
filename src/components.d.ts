@@ -117,6 +117,7 @@ declare global {
         "rowSaved": { rows: RowComponent[]; componentName: string };
         "rowEditionButtonClicked": { row: RowComponent; componentName: string };
         "dataLoadError": { error: any; componentName: string };
+        "dataProcessed": { data: any[]; componentName: string };
     }
     interface HTMLCustomTabulatorElement extends Components.CustomTabulator, HTMLStencilElement {
         addEventListener<K extends keyof HTMLCustomTabulatorElementEventMap>(type: K, listener: (this: HTMLCustomTabulatorElement, ev: CustomTabulatorCustomEvent<HTMLCustomTabulatorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -234,6 +235,7 @@ declare namespace LocalJSX {
         "isDeletionPermited"?: boolean;
         "name": string;
         "onDataLoadError"?: (event: CustomTabulatorCustomEvent<{ error: any; componentName: string }>) => void;
+        "onDataProcessed"?: (event: CustomTabulatorCustomEvent<{ data: any[]; componentName: string }>) => void;
         "onLoadedTable"?: (event: CustomTabulatorCustomEvent<{ table: CustomTabulatorRecMatching; componentName: string }>) => void;
         "onRowDeleted"?: (event: CustomTabulatorCustomEvent<{ row: RowComponent; componentName: string }>) => void;
         "onRowEditionButtonClicked"?: (event: CustomTabulatorCustomEvent<{ row: RowComponent; componentName: string }>) => void;
