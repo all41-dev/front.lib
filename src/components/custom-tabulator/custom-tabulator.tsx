@@ -371,6 +371,25 @@ export class CustomTabulator {
         const filteredData = this.tabulatorComponent.getData('active');
         this.dataProcessed.emit({ data: filteredData, componentName: this.name });
       });
+      this.tabulatorComponent.on('dataSorted', () => {
+        const rows = this.tabulatorComponent.getRows('visible');
+
+        const undefinedRows = [];
+        const otherRows = [];
+        rows.forEach(row => {
+          const rowData = row.getData();
+          const allUndefined = Object.values(rowData).every(value => value === undefined);
+
+          if (allUndefined) {
+            undefinedRows.push(row);
+          } else {
+            otherRows.push(row);
+          }
+        });
+        undefinedRows.forEach(row => {
+          row.move(otherRows.length + 1);
+        });
+      });
       this.tabulatorComponent.on('cellEdited', (cell: CellComponent) => {
         // store "real" initial value of field that survives row.reformat()
         const rowData = cell.getRow().getData();
