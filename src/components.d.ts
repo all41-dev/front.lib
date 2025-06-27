@@ -60,6 +60,12 @@ export namespace Components {
         "href": string;
         "relatedTo": string;
     }
+    interface PieChartComponent {
+        "compTitle": string;
+        "data": any[];
+        "processData": (data: any[]) => { labels: string[], values: number[] };
+        "uniqueId": string;
+    }
     interface ScheduleButton {
         "schedule": string;
     }
@@ -162,6 +168,12 @@ declare global {
         prototype: HTMLNavButtonElement;
         new (): HTMLNavButtonElement;
     };
+    interface HTMLPieChartComponentElement extends Components.PieChartComponent, HTMLStencilElement {
+    }
+    var HTMLPieChartComponentElement: {
+        prototype: HTMLPieChartComponentElement;
+        new (): HTMLPieChartComponentElement;
+    };
     interface HTMLScheduleButtonElement extends Components.ScheduleButton, HTMLStencilElement {
     }
     var HTMLScheduleButtonElement: {
@@ -199,6 +211,7 @@ declare global {
         "markdown-editor": HTMLMarkdownEditorElement;
         "markdown-preview": HTMLMarkdownPreviewElement;
         "nav-button": HTMLNavButtonElement;
+        "pie-chart-component": HTMLPieChartComponentElement;
         "schedule-button": HTMLScheduleButtonElement;
         "test-custom-navigator": HTMLTestCustomNavigatorElement;
         "test-custom-tabulator": HTMLTestCustomTabulatorElement;
@@ -267,6 +280,12 @@ declare namespace LocalJSX {
         "href"?: string;
         "relatedTo"?: string;
     }
+    interface PieChartComponent {
+        "compTitle"?: string;
+        "data"?: any[];
+        "processData"?: (data: any[]) => { labels: string[], values: number[] };
+        "uniqueId"?: string;
+    }
     interface ScheduleButton {
         "schedule"?: string;
     }
@@ -285,6 +304,7 @@ declare namespace LocalJSX {
         "markdown-editor": MarkdownEditor;
         "markdown-preview": MarkdownPreview;
         "nav-button": NavButton;
+        "pie-chart-component": PieChartComponent;
         "schedule-button": ScheduleButton;
         "test-custom-navigator": TestCustomNavigator;
         "test-custom-tabulator": TestCustomTabulator;
@@ -302,6 +322,7 @@ declare module "@stencil/core" {
             "markdown-editor": LocalJSX.MarkdownEditor & JSXBase.HTMLAttributes<HTMLMarkdownEditorElement>;
             "markdown-preview": LocalJSX.MarkdownPreview & JSXBase.HTMLAttributes<HTMLMarkdownPreviewElement>;
             "nav-button": LocalJSX.NavButton & JSXBase.HTMLAttributes<HTMLNavButtonElement>;
+            "pie-chart-component": LocalJSX.PieChartComponent & JSXBase.HTMLAttributes<HTMLPieChartComponentElement>;
             "schedule-button": LocalJSX.ScheduleButton & JSXBase.HTMLAttributes<HTMLScheduleButtonElement>;
             "test-custom-navigator": LocalJSX.TestCustomNavigator & JSXBase.HTMLAttributes<HTMLTestCustomNavigatorElement>;
             "test-custom-tabulator": LocalJSX.TestCustomTabulator & JSXBase.HTMLAttributes<HTMLTestCustomTabulatorElement>;
