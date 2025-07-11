@@ -17,6 +17,9 @@ export namespace Components {
         "value": string;
     }
     interface CustomNavigator {
+        /**
+          * @default 0
+         */
         "defaultTab": number;
         "label"?: string;
         "navElements": { labelHtml: string; contentHtml: any; linkString?: string }[];
@@ -27,25 +30,58 @@ export namespace Components {
         "childRowDefault"?: Object;
         "columns": Array<CustomTabulatorColumn>;
         "componentTitle"?: string;
+        /**
+          * @default false
+         */
         "confirmBeforeDelete": boolean;
         "data"?: any;
         "download"?: { type: DownloadType; fileName: () => string | string; options: DownloadOptions };
+        /**
+          * @default 'inline'
+         */
         "editionMode": 'inline' | 'modal' | 'side' | 'bottom';
         "fillLookup": (col: CustomTabulatorColumn) => Promise<void>;
+        /**
+          * @default false
+         */
         "height": string | number | false;
+        /**
+          * @default 'uuid'
+         */
         "idPropName": string;
+        /**
+          * @default 'uuid'
+         */
         "index": string;
+        /**
+          * @default true
+         */
         "isDeletionPermited": boolean;
         "name": string;
+        /**
+          * @default {}
+         */
         "options"?: Options;
         "postRoute": string;
+        /**
+          * @default false
+         */
         "readOnly": boolean | 'updateOnly' | 'createOnly';
         "requestHeaders": { [key: string]: string };
         "route": string;
         "rowDefault"?: Object;
+        /**
+          * @default true
+         */
         "tabEndNewRow"?: boolean;
         "tabulatorComponent": TabulatorFull;
+        /**
+          * @default 'fitDataStretch'
+         */
         "tabulatorLayout": 'fitDataStretch' | 'fitData' | 'fitColumns' | 'fitDataFill' | 'fitDataTable';
+        /**
+          * @default false
+         */
         "treeConfig": false | { childField: string; parentField: string; hideAddChild?: (row: any) => boolean };
     }
     interface MarkdownEditor {
@@ -228,6 +264,9 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     interface CustomNavigator {
+        /**
+          * @default 0
+         */
         "defaultTab"?: number;
         "label"?: string;
         "navElements"?: { labelHtml: string; contentHtml: any; linkString?: string }[];
@@ -238,13 +277,31 @@ declare namespace LocalJSX {
         "childRowDefault"?: Object;
         "columns": Array<CustomTabulatorColumn>;
         "componentTitle"?: string;
+        /**
+          * @default false
+         */
         "confirmBeforeDelete"?: boolean;
         "data"?: any;
         "download"?: { type: DownloadType; fileName: () => string | string; options: DownloadOptions };
+        /**
+          * @default 'inline'
+         */
         "editionMode"?: 'inline' | 'modal' | 'side' | 'bottom';
+        /**
+          * @default false
+         */
         "height"?: string | number | false;
+        /**
+          * @default 'uuid'
+         */
         "idPropName"?: string;
+        /**
+          * @default 'uuid'
+         */
         "index"?: string;
+        /**
+          * @default true
+         */
         "isDeletionPermited"?: boolean;
         "name": string;
         "onDataLoadError"?: (event: CustomTabulatorCustomEvent<{ error: any; componentName: string }>) => void;
@@ -256,15 +313,30 @@ declare namespace LocalJSX {
         "onRowSelected"?: (event: CustomTabulatorCustomEvent<{ rows: RowComponent[]; componentName: string }>) => void;
         "onRows"?: (event: CustomTabulatorCustomEvent<{ rows: RowComponent[]; componentName: string }>) => void;
         "onTableBuilt"?: (event: CustomTabulatorCustomEvent<{ table: CustomTabulatorRecMatching; componentName: string }>) => void;
+        /**
+          * @default {}
+         */
         "options"?: Options;
         "postRoute"?: string;
+        /**
+          * @default false
+         */
         "readOnly"?: boolean | 'updateOnly' | 'createOnly';
         "requestHeaders"?: { [key: string]: string };
         "route": string;
         "rowDefault"?: Object;
+        /**
+          * @default true
+         */
         "tabEndNewRow"?: boolean;
         "tabulatorComponent"?: TabulatorFull;
+        /**
+          * @default 'fitDataStretch'
+         */
         "tabulatorLayout"?: 'fitDataStretch' | 'fitData' | 'fitColumns' | 'fitDataFill' | 'fitDataTable';
+        /**
+          * @default false
+         */
         "treeConfig"?: false | { childField: string; parentField: string; hideAddChild?: (row: any) => boolean };
     }
     interface MarkdownEditor {

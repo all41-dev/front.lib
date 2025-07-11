@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property        | Attribute | Description | Type                         | Default     |
-| --------------- | --------- | ----------- | ---------------------------- | ----------- |
-| `textareaStyle` | --        |             | `{ [key: string]: string; }` | `undefined` |
-| `value`         | `value`   |             | `string`                     | `undefined` |
+| Property        | Attribute        | Description | Type                         | Default     |
+| --------------- | ---------------- | ----------- | ---------------------------- | ----------- |
+| `textareaStyle` | `textarea-style` |             | `{ [key: string]: string; }` | `undefined` |
+| `value`         | `value`          |             | `string`                     | `undefined` |
 
 
 ## Events

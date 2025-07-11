@@ -9,27 +9,27 @@
 
 | Property               | Attribute               | Description | Type                                                                                              | Default            |
 | ---------------------- | ----------------------- | ----------- | ------------------------------------------------------------------------------------------------- | ------------------ |
-| `actionButtonTags`     | --                      |             | `(string \| { tag: string; props: any; })[]`                                                      | `undefined`        |
-| `childRowDefault`      | --                      |             | `Object`                                                                                          | `undefined`        |
-| `columns` _(required)_ | --                      |             | `CustomTabulatorColumn[]`                                                                         | `undefined`        |
+| `actionButtonTags`     | `action-button-tags`    |             | `(string \| { tag: string; props: any; })[]`                                                      | `undefined`        |
+| `childRowDefault`      | `child-row-default`     |             | `Object`                                                                                          | `undefined`        |
+| `columns` _(required)_ | `columns`               |             | `CustomTabulatorColumn[]`                                                                         | `undefined`        |
 | `componentTitle`       | `component-title`       |             | `string`                                                                                          | `undefined`        |
 | `confirmBeforeDelete`  | `confirm-before-delete` |             | `boolean`                                                                                         | `false`            |
 | `data`                 | `data`                  |             | `any`                                                                                             | `undefined`        |
-| `download`             | --                      |             | `{ type: DownloadType; fileName: () => string; options: DownloadOptions; }`                       | `undefined`        |
+| `download`             | `download`              |             | `{ type: DownloadType; fileName: () => string; options: DownloadOptions; }`                       | `undefined`        |
 | `editionMode`          | `edition-mode`          |             | `"bottom" \| "inline" \| "modal" \| "side"`                                                       | `'inline'`         |
 | `height`               | `height`                |             | `boolean \| number \| string`                                                                     | `false`            |
 | `idPropName`           | `id-prop-name`          |             | `string`                                                                                          | `'uuid'`           |
 | `index`                | `index`                 |             | `string`                                                                                          | `'uuid'`           |
 | `isDeletionPermited`   | `is-deletion-permited`  |             | `boolean`                                                                                         | `true`             |
 | `name` _(required)_    | `name`                  |             | `string`                                                                                          | `undefined`        |
-| `options`              | --                      |             | `Options`                                                                                         | `{}`               |
+| `options`              | `options`               |             | `Options`                                                                                         | `{}`               |
 | `postRoute`            | `post-route`            |             | `string`                                                                                          | `undefined`        |
 | `readOnly`             | `read-only`             |             | `"createOnly" \| "updateOnly" \| boolean`                                                         | `false`            |
-| `requestHeaders`       | --                      |             | `{ [key: string]: string; }`                                                                      | `undefined`        |
+| `requestHeaders`       | `request-headers`       |             | `{ [key: string]: string; }`                                                                      | `undefined`        |
 | `route` _(required)_   | `route`                 |             | `string`                                                                                          | `undefined`        |
-| `rowDefault`           | --                      |             | `Object`                                                                                          | `undefined`        |
+| `rowDefault`           | `row-default`           |             | `Object`                                                                                          | `undefined`        |
 | `tabEndNewRow`         | `tab-end-new-row`       |             | `boolean`                                                                                         | `true`             |
-| `tabulatorComponent`   | --                      |             | `TabulatorFull`                                                                                   | `undefined`        |
+| `tabulatorComponent`   | `tabulator-component`   |             | `TabulatorFull`                                                                                   | `undefined`        |
 | `tabulatorLayout`      | `tabulator-layout`      |             | `"fitColumns" \| "fitData" \| "fitDataFill" \| "fitDataStretch" \| "fitDataTable"`                | `'fitDataStretch'` |
 | `treeConfig`           | `tree-config`           |             | `boolean \| ({ childField: string; parentField: string; hideAddChild?: (row: any) => boolean; })` | `false`            |
 
