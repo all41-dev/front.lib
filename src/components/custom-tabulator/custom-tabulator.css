@@ -5,6 +5,7 @@
 .selected-row {
   background-color: rgb(199, 221, 247) !important;
   border-left: .3em solid rgb(104, 136, 243);
+  border-bottom: 1px solid rgb(104, 136, 243) !important;
   padding-left: .3em;
   transition:
     background-color 0.2s ease-in-out,
