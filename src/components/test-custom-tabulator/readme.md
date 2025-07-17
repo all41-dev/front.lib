@@ -9,7 +9,7 @@
 
 ### Used by
 
- - [test-root](../test-root)
+ - [test-custom-navigator](../test-custom-navigator)
 
 ### Depends on
 
@@ -21,7 +21,7 @@ graph TD;
   test-custom-tabulator --> custom-tabulator
   custom-tabulator --> code-editor
   custom-tabulator --> markdown-editor
-  test-root --> test-custom-tabulator
+  test-custom-navigator --> test-custom-tabulator
   style test-custom-tabulator fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

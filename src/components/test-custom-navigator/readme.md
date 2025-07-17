@@ -13,12 +13,19 @@
 
 ### Depends on
 
+- [test-custom-tabulator](../test-custom-tabulator)
+- [test-markdown](../test-markdown)
 - [custom-navigator](../custom-navigator)
 
 ### Graph
 ```mermaid
 graph TD;
+  test-custom-navigator --> test-custom-tabulator
+  test-custom-navigator --> test-markdown
   test-custom-navigator --> custom-navigator
+  test-custom-tabulator --> custom-tabulator
+  custom-tabulator --> code-editor
+  custom-tabulator --> markdown-editor
   test-root --> test-custom-navigator
   style test-custom-navigator fill:#f9f,stroke:#333,stroke-width:4px
 ```
