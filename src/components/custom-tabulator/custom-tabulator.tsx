@@ -736,7 +736,7 @@ export class CustomTabulator {
     });
     if (RowHelper.isEdited(row)) row.getElement().style.backgroundColor = 'rgb(255, 251, 213)';
     else {
-      row.getElement().style.backgroundColor = row.getElement().classList.contains('tabulator-row-even') ? 'rgba(0, 0, 0, 0.05)' : 'inherit';
+      row.getElement().classList.remove('tabulator-row-even');
       row.getElement().classList.remove('edited-row');
     }
 
