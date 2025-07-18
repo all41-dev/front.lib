@@ -18,9 +18,16 @@
   padding-left: .3em;
 }
 
-.map-height {
-  height: 25vh !important;
-  overflow: scroll;
+.map-height-bottom {
+  height: auto !important;
+  max-height: 25vh;
+  overflow: auto;
+}
+
+.map-height-side {
+  height: auto !important;
+  max-height: 60vh;
+  overflow: auto;
 }
 
 .edition-content {

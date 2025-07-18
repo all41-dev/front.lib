@@ -706,6 +706,7 @@ export class CustomTabulator {
     }
   };
   rowFormater = (row: RowComponent): void => {
+    row.getElement().classList.remove('tabulator-row-even');
     if (this.readOnly) return;
     if (!row) return;
 
@@ -736,7 +737,6 @@ export class CustomTabulator {
     });
     if (RowHelper.isEdited(row)) row.getElement().style.backgroundColor = 'rgb(255, 251, 213)';
     else {
-      row.getElement().classList.remove('tabulator-row-even');
       row.getElement().classList.remove('edited-row');
     }
 
@@ -1084,7 +1084,6 @@ export class CustomTabulator {
     const groupCount = groups.length;
 
     let colClass: string;
-
     if (this.editionMode === 'side') {
       colClass = 'col-md-6';
     } else {
@@ -1094,12 +1093,13 @@ export class CustomTabulator {
     }
 
     return (
-      <div class="container-fluid py-3">
+      <div class="container-fluid py-3 d-flex flex-column h-100" style={{ overflow: 'hidden' }}>
         <div class="d-flex align-items-center mb-3 border-bottom pb-2">
           <i class="bi bi-pencil-square me-2 text-primary fs-4"></i>
-          <h5 class="mb-0 text-truncate">{`${!!this.editedRow?.getData()[this.idPropName] ? 'Update' : 'Create'} ${this.componentTitle ? singular(this.componentTitle) : ''}`}</h5>
+          <h5 class="mb-0 text-truncate">{`${!!this.editedRow?.getData()[this.idPropName] ? 'Update' : 'Create'} `}</h5>
         </div>
         <form
+          class="d-flex flex-column flex-grow-1"
           onSubmit={e => {
             e.preventDefault();
             this.saveRow(this.editedRow).then(() => {
@@ -1113,15 +1113,15 @@ export class CustomTabulator {
           }}
         >
           <div
-            class="row gy-3 overflow-auto px-1"
+            class="row gy-3 px-1 flex-grow-1"
             style={{
-              maxHeight: `${+this.options.maxHeight - 80}px`,
-              minHeight: '200px',
+              maxHeight: `${this.options.maxHeight}`,
+              overflow: 'auto',
             }}
           >
             {groups.map((group, i) => (
               <div class={`${colClass} mb-3`} key={i}>
-                <div class={`card shadow-sm h-100 ${isMap ? 'map-height' : ''}`}>
+                <div class={`card shadow-sm ${isMap ? (this.editionMode === 'side' ? 'map-height-side' : 'map-height-bottom') : ''}`}>
                   {group && (
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                       <strong>{group}</strong>
@@ -1137,7 +1137,7 @@ export class CustomTabulator {
                       </button>
                     </div>
                   )}
-                  <div id={`collapse-${i}`} class="collapse show d-md-block card-body">
+                  <div id={`collapse-${i}`} class="collapse show d-md-block card-body overflow-auto">
                     <div class={alignClass}>{cols.filter(col => col.modalFieldGroup === group).map(def => this.getModalField(def))}</div>
                   </div>
                 </div>
@@ -1175,18 +1175,15 @@ export class CustomTabulator {
                 <i class="bi bi-x-lg me-1"></i>
                 <span class="d-none d-sm-inline">Close</span>
               </button>
-
               <button type="submit" class="btn btn-outline-primary d-flex align-items-center" onClick={() => (this.closeOnSave = false)} title="Save without closing">
                 <i class="bi bi-save me-1"></i>
                 <span class="d-none d-sm-inline">Save</span>
               </button>
-
               <button type="submit" class="btn btn-primary d-flex align-items-center" onClick={() => (this.closeOnSave = true)} title="Save and close">
                 <i class="bi bi-check-lg me-1"></i>
                 <span class="d-none d-sm-inline">Save & Close</span>
               </button>
             </div>
-
             <div class="btn-group flex-wrap" role="group">
               {this.actionButtonTags && this.createActionButtonGroup()}
               {this.createDeleteButton()}

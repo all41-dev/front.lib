@@ -103,7 +103,8 @@ export class TestCustomTabulator {
           route=""
           treeConfig={{ parentField: 'parentUuid', childField: 'childs' }}
           editionMode={'side'}
-          height={500}
+          height={'75vh'}
+          //options={{ maxHeight: '20vh' }}
           data={data}
           columns={columns}
         ></custom-tabulator>
