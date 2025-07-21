@@ -3,14 +3,22 @@ import { Component, h } from '@stencil/core';
 @Component({
   tag: 'test-markdown',
   styleUrl: 'test-markdown.css',
+  shadow: false,
 })
-export class TestMarkDown {
+export class TestMarkdown {
+  private previewMarkdown = `## Hello Markdown Preview`;
+
   render() {
     return (
-      <div class="container">
-        <h2>Markdown component</h2>
-        <mark-down name="markdown" data="## Hello mar"></mark-down>
-      </div>
+      <section class="markdown-test-container">
+        <header>
+          <h2>Markdown Components Test</h2>
+        </header>
+        <article class="markdown-preview-component">
+          <h3>Using &lt;markdown-preview&gt;:</h3>
+          <markdown-preview markdown={this.previewMarkdown}></markdown-preview>
+        </article>
+      </section>
     );
   }
 }
