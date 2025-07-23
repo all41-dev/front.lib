@@ -10,14 +10,13 @@ export class PieChartComponent {
   @Prop() data: any[];
   @Prop() uniqueId: string;
   @Prop() compTitle: string;
-  @Prop() processData: (data: any[]) => { labels: string[], values: number[] };
+  @Prop() processData: (data: any[]) => { labels: string[]; values: number[] };
   @Element() el: HTMLElement;
 
   private pieChart: any;
 
   componentDidLoad() {
     this.drawPieChart();
-    console.log(this.data)
   }
 
   roundDownToNearest05(amount: number): number {
@@ -35,7 +34,7 @@ export class PieChartComponent {
     }
     this.drawPieChart();
   }
-   formatCurrency(amount: number): string {
+  formatCurrency(amount: number): string {
     const roundedAmount = this.roundDownToNearest05(amount);
     return new Intl.NumberFormat('fr-CH', {
       style: 'currency',
@@ -87,12 +86,12 @@ export class PieChartComponent {
           },
           tooltip: {
             callbacks: {
-              label: (context) => {
-              const label = context.label || '';
-              const value = context.raw ?? 0;
-              return `${label}: ${this.formatCurrency(+value)}`;
+              label: context => {
+                const label = context.label || '';
+                const value = context.raw ?? 0;
+                return `${label}: ${this.formatCurrency(+value)}`;
+              },
             },
-            }
           },
           title: {
             display: true,
@@ -102,7 +101,7 @@ export class PieChartComponent {
             },
           },
         },
-      }
+      },
     });
   }
 

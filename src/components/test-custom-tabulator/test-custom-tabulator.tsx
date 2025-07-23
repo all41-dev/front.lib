@@ -49,7 +49,7 @@ export class TestCustomTabulator {
         maxWidth: 150,
         validator: ['minLength:5', 'required'] as any,
       },
-      { title: 'Comment', field: 'comment', editable: true, editor: 'textarea', modalFieldGroup: 'Tabulator Modal 1', headerFilter: 'input', width: 250 },
+      { title: 'Comment', field: 'comment', editable: true, editor: 'textarea', modalFieldGroup: 'Tabulator Modal 3', headerFilter: 'input', width: 250 },
       { title: 'state', field: 'state', editable: false, headerFilter: 'input', width: 100, formatter: this.formatStatusCell.bind(this) },
       { title: 'number', field: 'c4', editable: true, editor: 'number', modalFieldGroup: 'Tabulator Modal 2', headerFilter: 'input', width: 800, visible: false },
       {
@@ -102,8 +102,8 @@ export class TestCustomTabulator {
           readOnly={false}
           route=""
           treeConfig={{ parentField: 'parentUuid', childField: 'childs' }}
-          editionMode={'side'}
-          height={'75vh'}
+          editionMode={'bottom'}
+          height={'45vh'}
           //options={{ maxHeight: '20vh' }}
           data={data}
           columns={columns}

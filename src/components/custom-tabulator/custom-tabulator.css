@@ -31,7 +31,7 @@
 }
 
 .edition-content {
-  background-color: rgb(199, 221, 247);
+  background-color: rgb(199, 221, 247) !important;
 }
 
 .modified-field {

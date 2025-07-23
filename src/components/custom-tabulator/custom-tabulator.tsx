@@ -610,6 +610,7 @@ export class CustomTabulator {
           });
           const detailContainer = document.getElementById(`${this.name}-detail-container`);
           this.resetFormElementStyles(detailContainer);
+          row.update(data);
 
           this.rowSaved.emit({ rows: [row], componentName: this.name });
           if (isNew) {
@@ -895,11 +896,64 @@ export class CustomTabulator {
   saveAndCloseRow() {
     this.hideDetail();
   }
-  createDeleteButton() {
+  createModalButton() {
     return (
-      <button type="button" name="deleteBtn" class="btn btn-sm btn-danger" title="delete" onClick={this.handleDeleteClick.bind(this)}>
-        <i class="bi bi-trash3 pr-2"></i> Delete Record
-      </button>
+      <div class={`modal-footer my-2 d-flex flex-wrap gap-2 justify-content-between`}>
+        <div class="d-flex flex-wrap">
+          <div class="btn-group flex-wrap" role="group">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary d-flex align-items-center"
+              onClick={() => {
+                this.revertRow(this.editedRow);
+                const detailContainer = document.getElementById(`${this.name}-detail-container`);
+                if (detailContainer) {
+                  this.updateFormWithRowData(detailContainer, this.editedRow.getData());
+                  this.updateCodeEditors(detailContainer, this.editedRow.getData());
+                  this.resetFormElementStyles(detailContainer);
+                }
+              }}
+              title="Revert changes"
+            >
+              <i class="bi bi-arrow-counterclockwise me-1"></i>
+              <span class="d-none d-sm-inline">Cancel</span>
+            </button>
+
+            {this.editionMode !== 'modal' && (
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary d-flex align-items-center"
+                onClick={() => {
+                  if (this.editionMode !== 'modal') this.hideDetail();
+                }}
+                title="Close without saving"
+              >
+                <i class="bi bi-x-lg me-1"></i>
+                <span class="d-none d-sm-inline">Close</span>
+              </button>
+            )}
+
+            <button type="submit" class="btn btn-sm btn-outline-primary d-flex align-items-center" onClick={() => (this.closeOnSave = false)} title="Save without closing">
+              <i class="bi bi-save me-1"></i>
+              <span class="d-none d-sm-inline">Save</span>
+            </button>
+
+            <button type="submit" class="btn btn-sm btn-primary d-flex align-items-center" onClick={() => (this.closeOnSave = true)} title="Save and close">
+              <i class="bi bi-check-lg me-1"></i>
+              <span class="d-none d-sm-inline">Save & Close</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          {this.actionButtonTags && this.createActionButtonGroup()}
+          {this.isDeletionPermited && (
+            <button type="button" name="deleteBtn" class="btn btn-sm btn-danger" title="delete" onClick={this.handleDeleteClick.bind(this)}>
+              <i class="bi bi-trash3 pr-2"></i> Delete Record
+            </button>
+          )}{' '}
+        </div>
+      </div>
     );
   }
 
@@ -976,6 +1030,7 @@ export class CustomTabulator {
     });
     return <div class="" id="side-modal-btn-group" style={{ height: '31px' }} innerHTML={buttons.join('')}></div>;
   }
+
   getModalForm(isMap: boolean = false): JSX.Element {
     if (!this.editedRow) return '';
 
@@ -1026,51 +1081,7 @@ export class CustomTabulator {
             </div>
           </div>
 
-          <div class="modal-footer flex-wrap gap-2 justify-content-between">
-            <div class="btn-group flex-wrap" role="group" aria-label="Record Controls">
-              <button
-                type="button"
-                class="btn btn-outline-secondary d-flex align-items-center"
-                data-bs-dismiss="modal"
-                onClick={() => this.revertRow(this.editedRow)}
-                title="Revert changes and close"
-              >
-                <i class="bi bi-arrow-counterclockwise me-1"></i>
-                <span class="d-none d-sm-inline">Cancel</span>
-              </button>
-
-              <button type="button" class="btn btn-outline-secondary d-flex align-items-center" data-bs-dismiss="modal" title="Close without saving">
-                <i class="bi bi-x-lg me-1"></i>
-                <span class="d-none d-sm-inline">Close</span>
-              </button>
-
-              <button type="submit" class="btn btn-outline-primary d-flex align-items-center" onClick={() => (this.closeOnSave = false)} title="Save and keep open">
-                <i class="bi bi-save me-1"></i>
-                <span class="d-none d-sm-inline">Save</span>
-              </button>
-
-              <button
-                type="submit"
-                class="btn btn-primary d-flex align-items-center"
-                onClick={() => {
-                  if (this.editionMode !== 'modal') {
-                    this.saveAndCloseRow();
-                    this.revertRow(this.editedRow);
-                  }
-                  this.closeOnSave = true;
-                }}
-                title="Save and close"
-              >
-                <i class="bi bi-check2-circle me-1"></i>
-                <span class="d-none d-sm-inline">Save & Close</span>
-              </button>
-            </div>
-
-            <div class="btn-group flex-wrap" role="group">
-              {this.actionButtonTags && this.createActionButtonGroup()}
-              {this.createDeleteButton()}
-            </div>
-          </div>
+          {this.createModalButton()}
         </form>
       </div>
     );
@@ -1085,7 +1096,8 @@ export class CustomTabulator {
 
     let colClass: string;
     if (this.editionMode === 'side') {
-      colClass = 'col-md-6';
+      if (groupCount === 1) colClass = 'col-12';
+      else colClass = 'col-md-6';
     } else {
       if (groupCount === 2) colClass = 'col-md-6';
       else if (groupCount >= 3) colClass = 'col-md-6 col-lg-4';
@@ -1093,11 +1105,12 @@ export class CustomTabulator {
     }
 
     return (
-      <div class="container-fluid py-3 d-flex flex-column h-100" style={{ overflow: 'hidden' }}>
-        <div class="d-flex align-items-center mb-3 border-bottom pb-2">
+      <div class="container-fluid py-4 px-3 w-100 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center mb-3 border-bottom border-secondary pb-2">
           <i class="bi bi-pencil-square me-2 text-primary fs-4"></i>
-          <h5 class="mb-0 text-truncate">{`${!!this.editedRow?.getData()[this.idPropName] ? 'Update' : 'Create'} `}</h5>
+          <h5 class="mb-0 text-truncate fw-semibold">{`${!!this.editedRow?.getData()[this.idPropName] ? 'Update' : 'Create'} `}</h5>
         </div>
+
         <form
           class="d-flex flex-column flex-grow-1"
           onSubmit={e => {
@@ -1112,83 +1125,41 @@ export class CustomTabulator {
             });
           }}
         >
-          <div
-            class="row gy-3 px-1 flex-grow-1"
-            style={{
-              maxHeight: `${this.options.maxHeight}`,
-              overflow: 'auto',
-            }}
-          >
-            {groups.map((group, i) => (
-              <div class={`${colClass} mb-3`} key={i}>
-                <div class={`card shadow-sm ${isMap ? (this.editionMode === 'side' ? 'map-height-side' : 'map-height-bottom') : ''}`}>
-                  {group && (
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                      <strong>{group}</strong>
-                      <button
-                        class="btn btn-sm btn-light d-md-none"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target={`#collapse-${i}`}
-                        aria-expanded="true"
-                        aria-controls={`collapse-${i}`}
-                      >
-                        <i class="bi bi-arrows-collapse"></i>
-                      </button>
+          <div class="row gy-3 px-1 flex-grow-1 overflow-auto" style={{ maxHeight: `${this.options.maxHeight}` }}>
+            {groups.map((group, i) => {
+              let columnClass = colClass;
+              if (this.editionMode === 'side') {
+                columnClass = groupCount % 2 === 1 && i === 0 ? 'col-12' : 'col-md-6';
+              }
+
+              return (
+                <div class={`${columnClass} mb-3`} key={i}>
+                  <div class={`card shadow-sm border-0 rounded-3 ${isMap ? (this.editionMode === 'side' ? 'map-height-side' : 'map-height-bottom') : ''}`}>
+                    {group && (
+                      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <strong>{group}</strong>
+                        <button
+                          class="btn btn-sm btn-light d-md-none collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target={`#collapse-${i}`}
+                          aria-expanded="true"
+                          aria-controls={`collapse-${i}`}
+                        >
+                          <i class="bi bi-chevron-down"></i>
+                        </button>
+                      </div>
+                    )}
+
+                    <div id={`collapse-${i}`} class="collapse show d-md-block card-body overflow-auto">
+                      <div class={alignClass}>{cols.filter(col => col.modalFieldGroup === group).map(def => this.getModalField(def))}</div>
                     </div>
-                  )}
-                  <div id={`collapse-${i}`} class="collapse show d-md-block card-body overflow-auto">
-                    <div class={alignClass}>{cols.filter(col => col.modalFieldGroup === group).map(def => this.getModalField(def))}</div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-
-          <div class="modal-footer mt-4 flex-wrap gap-2 justify-content-between">
-            <div class="btn-group flex-wrap" role="group" aria-label="Record Controls">
-              <button
-                type="button"
-                class="btn btn-outline-secondary d-flex align-items-center"
-                onClick={() => {
-                  this.revertRow(this.editedRow);
-                  const detailContainer = document.getElementById(`${this.name}-detail-container`);
-                  if (detailContainer) {
-                    this.updateFormWithRowData(detailContainer, this.editedRow.getData());
-                    this.updateCodeEditors(detailContainer, this.editedRow.getData());
-                    this.resetFormElementStyles(detailContainer);
-                  }
-                }}
-                title="Revert changes"
-              >
-                <i class="bi bi-arrow-counterclockwise me-1"></i>
-                <span class="d-none d-sm-inline">Cancel</span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-secondary d-flex align-items-center"
-                onClick={() => {
-                  if (this.editionMode !== 'modal') this.hideDetail();
-                }}
-                title="Close without saving"
-              >
-                <i class="bi bi-x-lg me-1"></i>
-                <span class="d-none d-sm-inline">Close</span>
-              </button>
-              <button type="submit" class="btn btn-outline-primary d-flex align-items-center" onClick={() => (this.closeOnSave = false)} title="Save without closing">
-                <i class="bi bi-save me-1"></i>
-                <span class="d-none d-sm-inline">Save</span>
-              </button>
-              <button type="submit" class="btn btn-primary d-flex align-items-center" onClick={() => (this.closeOnSave = true)} title="Save and close">
-                <i class="bi bi-check-lg me-1"></i>
-                <span class="d-none d-sm-inline">Save & Close</span>
-              </button>
-            </div>
-            <div class="btn-group flex-wrap" role="group">
-              {this.actionButtonTags && this.createActionButtonGroup()}
-              {this.createDeleteButton()}
-            </div>
-          </div>
+          {this.createModalButton()}
         </form>
       </div>
     );
@@ -1554,6 +1525,17 @@ export class CustomTabulator {
                 'col-md-12': this.editionMode === 'bottom',
                 'd-none': this.editionMode !== 'modal',
                 'edition-content': true,
+              }}
+              style={{
+                maxHeight:
+                  this.editionMode === 'side'
+                    ? typeof this.height === 'number'
+                      ? `${this.height}px`
+                      : this.height || (typeof this.options.maxHeight === 'number' ? `${this.options.maxHeight}px` : this.options.maxHeight)
+                    : this.editionMode === 'bottom'
+                    ? '40vh'
+                    : undefined,
+                overflow: 'auto',
               }}
             >
               {this.getEditionModeContent()}

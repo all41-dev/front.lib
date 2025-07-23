@@ -26,6 +26,7 @@ graph TD;
   test-custom-tabulator --> custom-tabulator
   custom-tabulator --> code-editor
   custom-tabulator --> markdown-editor
+  test-markdown --> markdown-preview
   test-root --> test-custom-navigator
   style test-custom-navigator fill:#f9f,stroke:#333,stroke-width:4px
 ```

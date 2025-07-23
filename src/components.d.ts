@@ -99,7 +99,7 @@ export namespace Components {
     interface PieChartComponent {
         "compTitle": string;
         "data": any[];
-        "processData": (data: any[]) => { labels: string[], values: number[] };
+        "processData": (data: any[]) => { labels: string[]; values: number[] };
         "uniqueId": string;
     }
     interface ScheduleButton {
@@ -355,7 +355,7 @@ declare namespace LocalJSX {
     interface PieChartComponent {
         "compTitle"?: string;
         "data"?: any[];
-        "processData"?: (data: any[]) => { labels: string[], values: number[] };
+        "processData"?: (data: any[]) => { labels: string[]; values: number[] };
         "uniqueId"?: string;
     }
     interface ScheduleButton {

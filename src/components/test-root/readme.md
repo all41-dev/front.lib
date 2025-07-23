@@ -21,6 +21,7 @@ graph TD;
   test-custom-tabulator --> custom-tabulator
   custom-tabulator --> code-editor
   custom-tabulator --> markdown-editor
+  test-markdown --> markdown-preview
   style test-root fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
