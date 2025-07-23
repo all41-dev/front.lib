@@ -1105,7 +1105,7 @@ export class CustomTabulator {
     }
 
     return (
-      <div class="container-fluid py-4 px-3 w-100 h-100 d-flex flex-column">
+      <div class="container-fluid w-100 h-100 d-flex flex-column">
         <div class="d-flex align-items-center mb-3 border-bottom border-secondary pb-2">
           <i class="bi bi-pencil-square me-2 text-primary fs-4"></i>
           <h5 class="mb-0 text-truncate fw-semibold">{`${!!this.editedRow?.getData()[this.idPropName] ? 'Update' : 'Create'} `}</h5>
@@ -1133,7 +1133,7 @@ export class CustomTabulator {
               }
 
               return (
-                <div class={`${columnClass} mb-3`} key={i}>
+                <div class={`${columnClass} mb-1`} key={i}>
                   <div class={`card shadow-sm border-0 rounded-3 ${isMap ? (this.editionMode === 'side' ? 'map-height-side' : 'map-height-bottom') : ''}`}>
                     {group && (
                       <div class="card-header bg-light d-flex justify-content-between align-items-center">
