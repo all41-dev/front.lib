@@ -30,6 +30,11 @@
   overflow: auto;
 }
 
+.map-height {
+  height: 25vh !important;
+  overflow: auto;
+}
+
 .edition-content {
   background-color: rgb(199, 221, 247) !important;
 }

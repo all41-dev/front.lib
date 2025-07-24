@@ -1063,7 +1063,7 @@ export class CustomTabulator {
           }}
         >
           <div class="modal-body">
-            <div class="container-fluid">
+            <div class="w-100 h-100">
               <div class="row g-3">
                 {groups.map((group, i) => (
                   <div class={`${colClass}`} key={i}>
@@ -1105,7 +1105,7 @@ export class CustomTabulator {
     }
 
     return (
-      <div class="container-fluid w-100 h-100 d-flex flex-column">
+      <div class="w-100 h-100 d-flex flex-column">
         <div class="d-flex align-items-center mb-3 border-bottom border-secondary pb-2">
           <i class="bi bi-pencil-square me-2 text-primary fs-4"></i>
           <h5 class="mb-0 text-truncate fw-semibold">{`${!!this.editedRow?.getData()[this.idPropName] ? 'Update' : 'Create'} `}</h5>
@@ -1505,7 +1505,7 @@ export class CustomTabulator {
     const title = this.componentTitle ? <h5 style={{ textAlign: 'center' }}>{this.componentTitle}</h5> : '';
 
     return (
-      <div class="container-fluid">
+      <div class="w-100 h-100">
         <div class="row" style={{ border: 'solid 1px lightgrey' }}>
           <div class="col-md-12">{title}</div>
           <div
