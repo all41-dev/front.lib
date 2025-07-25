@@ -707,9 +707,9 @@ export class CustomTabulator {
     }
   };
   rowFormater = (row: RowComponent): void => {
+    if (!row) return;
     row.getElement().classList.remove('tabulator-row-even');
     if (this.readOnly) return;
-    if (!row) return;
 
     const rowData = row.getData();
     // console.debug(rowData);
@@ -739,6 +739,7 @@ export class CustomTabulator {
     if (RowHelper.isEdited(row)) row.getElement().style.backgroundColor = 'rgb(255, 251, 213)';
     else {
       row.getElement().classList.remove('edited-row');
+      row.getElement().style.backgroundColor = 'transparent';
     }
 
     // global buttons
@@ -1063,7 +1064,7 @@ export class CustomTabulator {
           }}
         >
           <div class="modal-body">
-            <div class="w-100 h-100">
+            <div class="container-fluid">
               <div class="row g-3">
                 {groups.map((group, i) => (
                   <div class={`${colClass}`} key={i}>
