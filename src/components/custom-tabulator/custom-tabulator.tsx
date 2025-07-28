@@ -1506,7 +1506,7 @@ export class CustomTabulator {
     const title = this.componentTitle ? <h5 style={{ textAlign: 'center' }}>{this.componentTitle}</h5> : '';
 
     return (
-      <div class="w-100 h-100">
+      <div class="container-fluid">
         <div class="row" style={{ border: 'solid 1px lightgrey' }}>
           <div class="col-md-12">{title}</div>
           <div
