@@ -106,6 +106,7 @@ export namespace Components {
         "schedule": string;
     }
     interface TestCustomNavigator {
+        "match": any;
     }
     interface TestCustomTabulator {
     }
@@ -362,6 +363,7 @@ declare namespace LocalJSX {
         "schedule"?: string;
     }
     interface TestCustomNavigator {
+        "match"?: any;
     }
     interface TestCustomTabulator {
     }

@@ -13,45 +13,53 @@ export class CustomNavigators {
   @Prop() defaultTab: number = 0;
   @Prop() label?: string;
 
+  activeTab: number = 0;
+
+  componentWillLoad() {
+    this.activeTab = this.getInitialTabIndexFromUrl() ?? this.defaultTab;
+  }
+
   componentDidLoad() {
     this.initializeTab();
   }
 
   @Watch('defaultTab')
   watchDefaultTab(_newValue: number) {
+    this.activeTab = this.defaultTab;
     this.initializeTab();
+  }
+
+  getInitialTabIndexFromUrl(): number | null {
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    const lastSegment = pathSegments[pathSegments.length - 1];
+
+    const tabIndex = this.navElements?.findIndex(item => item.linkString === lastSegment);
+    return tabIndex >= 0 ? tabIndex : null;
   }
 
   initializeTab() {
     const container = this.el.querySelector('#uniqueNavigator');
-    if (!container) {
-      console.warn('Container not found!');
-      return;
-    }
-    // Exclude elements with data-bs-no-tab
-    const tabs = container.querySelectorAll('.nav-link:not([data-bs-no-tab])');
+    const tabs = container?.querySelectorAll('.nav-link:not([data-bs-no-tab])');
 
-    if (tabs && tabs.length > this.defaultTab) {
-      const defaultTabElement = tabs[this.defaultTab] as HTMLElement;
-
+    if (tabs && tabs.length > this.activeTab) {
+      const defaultTabElement = tabs[this.activeTab] as HTMLElement;
       try {
         const tabInstance = new bootstrap.Tab(defaultTabElement);
         tabInstance.show();
       } catch (error) {
         console.error('Error while showing tab:', error);
       }
-    } else {
-      console.warn('Active tab index is out of range or tabs not found.');
     }
   }
 
   renderTabContent(item: { labelHtml: string; contentHtml: any }, index: number) {
     return (
-      <div class={`tab-pane ${index === this.defaultTab ? 'active' : ''}`} id={`tab-${index}`} role="tabpanel" aria-labelledby={`tab-${index}-tab`}>
+      <div class={`tab-pane fade ${index === this.activeTab ? 'show active' : ''}`} id={`tab-${index}`} role="tabpanel" aria-labelledby={`tab-${index}-tab`}>
         {item.contentHtml}
       </div>
     );
   }
+
   createButton() {
     const buttons = [];
 
@@ -69,14 +77,14 @@ export class CustomNavigators {
       buttons.push(
         <li class="nav-item" role="presentation" key={index}>
           <button
-            class={`nav-link ${index === this.defaultTab ? 'active' : ''}`}
+            class={`nav-link ${index === this.activeTab ? 'active' : ''}`}
             id={`tab-${index}-tab`}
             data-bs-toggle="tab"
             data-bs-target={`#tab-${index}`}
             type="button"
             role="tab"
             aria-controls={`tab-${index}`}
-            aria-selected={index === this.defaultTab ? 'true' : 'false'}
+            aria-selected={index === this.activeTab ? 'true' : 'false'}
             innerHTML={item.labelHtml}
             onClick={() => this.setActiveTab(index, item.linkString)}
           ></button>
@@ -87,25 +95,41 @@ export class CustomNavigators {
     return buttons;
   }
 
-  setActiveTab(_index: number, linkString?: string) {
-    const currentUrl = window.location.pathname;
-
-    const baseUrl = currentUrl.split('/').slice(0, 4).join('/');
+  setActiveTab(index: number, linkString?: string) {
+    this.activeTab = index;
 
     if (linkString) {
-      const newUrl = this.uuid ? `${baseUrl}/${this.uuid}/${linkString}` : `${baseUrl}/${linkString}`;
+      const pathSegments = window.location.pathname.split('/').filter(Boolean);
+      let newPath = [...pathSegments];
+
+      if (this.navElements.some(item => item.linkString === pathSegments[pathSegments.length - 1])) {
+        newPath.pop();
+      }
+
+      if (this.uuid && !newPath.includes(this.uuid)) {
+        newPath.push(this.uuid);
+      }
+
+      newPath.push(linkString);
+
+      const newUrl = '/' + newPath.join('/');
       window.history.pushState({}, '', newUrl);
     }
+
+    this.initializeTab();
   }
 
   render() {
     return (
-      <div id="uniqueNavigator">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-          {this.createButton()}
-        </ul>
-
-        <div class="tab-content">{this.navElements.map((item, index) => this.renderTabContent(item, index))}</div>
+      <div id="uniqueNavigator" class="container-fluid my-3">
+        <div class="row">
+          <div class="col-12">
+            <ul class="nav nav-tabs flex-wrap" id="myTab" role="tablist">
+              {this.createButton()}
+            </ul>
+            <div class="tab-content">{this.navElements.map((item, index) => this.renderTabContent(item, index))}</div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -1,3 +1,4 @@
+import { Prop, State } from '@stencil/core';
 import { Component, Host, h } from '@stencil/core';
 
 @Component({
@@ -6,6 +7,24 @@ import { Component, Host, h } from '@stencil/core';
   shadow: false,
 })
 export class TestCustomNavigator {
+  @Prop() match;
+
+  @State() activeTab: number = 0;
+
+  async componentWillLoad() {
+    this.setActiveTabBasedOnRoute(this.match.params.section);
+  }
+
+  setActiveTabBasedOnRoute(section: string) {
+    const tabIndex =
+      {
+        custom: 0,
+        markdown: 1,
+      }[section] || 0;
+
+    this.activeTab = tabIndex;
+  }
+
   render() {
     const tabCustomTabulator = (
       <div class="container-fluid m-3">
@@ -25,7 +44,7 @@ export class TestCustomNavigator {
             { labelHtml: 'Custom Tabulator', contentHtml: tabCustomTabulator, linkString: 'custom' },
             { labelHtml: 'Markdown Preview', contentHtml: tabMarkdown, linkString: 'markdown' },
           ]}
-          defaultTab={0}
+          defaultTab={this.activeTab}
           label={'Custom Navigator'}
         ></custom-navigator>
       </Host>
