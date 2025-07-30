@@ -1,10 +1,9 @@
 import { CellComponent, RowComponent } from "tabulator-tables";
 import Swal from 'sweetalert2';
 import { Env } from "@stencil/core";
+import humanizeDuration from 'humanize-duration';
+import * as bootstrap from 'bootstrap';
 
-// export function format(first: string, middle: string, last: string): string {
-//   return (first || '') + (middle ? ` ${middle}` : '') + (last ? ` ${last}` : '');
-// }
 export class RowHelper {
   static isEdited = (row: RowComponent) => row.getCells().some((c) => c.isEdited());
   static isNew = (row: RowComponent, keyField: string) => !row.getData()[keyField];
@@ -19,10 +18,6 @@ export class CellHelper {
   static isEdited = (cell: CellComponent) => {
     const ctValue = cell.getValue();
     const initialValue = cell.getRow().getData().__initialValues[cell.getField()] || cell.getInitialValue();
-
-    // console.debug(ctValue);
-    // console.debug(initialValue);
-    // console.debug(ctValue == initialValue);
     return ctValue != initialValue;
   }
 }
@@ -33,6 +28,41 @@ export class HtmlHelper {
     elem.innerHTML = innerHtml;
     return elem.content.firstElementChild as HTMLElement;
   }
+}
+
+export function humanizeTimeDifference(date: string | number | Date): string {
+  const nowUtc = new Date().getTime();
+  const dateUtc = new Date(date).getTime();
+
+  const diffInMs = nowUtc - dateUtc;
+
+  return humanizeDuration(diffInMs, { largest: 2, round: true });
+}
+
+export function activeTooltip(tooltipLabel: string, cell: CellComponent) {
+  const cellElement = cell.getElement();
+  cellElement.setAttribute('data-bs-toggle', 'tooltip');
+  cellElement.setAttribute('data-bs-placement', 'top');
+  cellElement.setAttribute('title', tooltipLabel);
+
+  let tooltip = bootstrap.Tooltip.getInstance(cellElement);
+  if (!tooltip) {
+    tooltip = new bootstrap.Tooltip(cellElement, {
+      customClass: 'custom-tooltip',
+      container: 'body',
+    });
+  }
+}
+
+export function initTooltips() {
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    if (!bootstrap.Tooltip.getInstance(el)) {
+      new bootstrap.Tooltip(el, {
+        customClass: 'custom-tooltip',
+        container: 'body',
+      });
+    }
+  });
 }
 
 export function handleError(error: any) {
