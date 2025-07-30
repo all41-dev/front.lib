@@ -30,16 +30,16 @@ export class HtmlHelper {
   }
 }
 
-export function humanizeTimeDifference(date: string | number | Date): string {
-  const nowUtc = new Date().getTime();
-  const dateUtc = new Date(date).getTime();
+export function humanizeTimeDifference(startDate: string | number | Date, endDate?: string | number | Date): string {
+  const nowUtc = endDate ? new Date(endDate).getTime() : new Date().getTime();
+  const dateUtc = new Date(startDate).getTime();
 
   const diffInMs = nowUtc - dateUtc;
 
   return humanizeDuration(diffInMs, { largest: 2, round: true });
 }
 
-export function activeTooltip(tooltipLabel: string, cell: CellComponent) {
+export function activeCellTooltip(tooltipLabel: string, cell: CellComponent) {
   const cellElement = cell.getElement();
   cellElement.setAttribute('data-bs-toggle', 'tooltip');
   cellElement.setAttribute('data-bs-placement', 'top');

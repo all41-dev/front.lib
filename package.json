@@ -28,9 +28,8 @@
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll --port 3334",
     "generate": "stencil generate",
-    "preversion": "npm run build",
-    "version": "",
-    "postversion": "npm publish"
+    "preversion": "npm run build --prod",
+    "postversion": "git push && git push --tags && npm publish"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.9",
