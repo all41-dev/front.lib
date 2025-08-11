@@ -50,7 +50,7 @@ export class TestCustomTabulator {
         title: 'Comment',
         field: 'comment',
         editable: true,
-        editor: 'textarea',
+        editor: 'markdown',
         modalFieldGroup: 'Tabulator Modal 1',
         headerFilter: 'input',
         width: 250,
@@ -137,8 +137,9 @@ export class TestCustomTabulator {
             readOnly={false}
             route="users"
             idPropName="id"
-            editionMode="side"
+            editionMode="modal"
             height="500"
+            actionButtonTags={['test-action-button']}
             columns={apiColumns}
           ></custom-tabulator>
         ) : (

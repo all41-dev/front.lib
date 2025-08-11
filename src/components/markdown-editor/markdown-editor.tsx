@@ -10,6 +10,8 @@ import 'highlight.js/styles/github.css';
 export class MarkdownEditor {
   @Prop() value: string;
   @Prop() textareaStyle: { [key: string]: string };
+  @Prop() height: string = '150px';
+
   @State() markdown: string = '';
   @State() showImageUrlInput: boolean = false;
   @State() imageUrl: string = '';
@@ -271,7 +273,7 @@ export class MarkdownEditor {
           style={{ ...this.textareaStyles }}
           // value={this.markdown}
         >
-          <div class="editor-preview border p-2 bg-light" id="markdownEditorEditorPreview"></div>
+          <div class="editor-preview border p-2 bg-light" style={{ height: this.height }} id="markdownEditorEditorPreview"></div>
         </div>
 
         <div class={`modal fade ${this.showModal ? 'show' : ''}`} tabindex="-1" style={{ display: this.showModal ? 'block' : 'none' }}>

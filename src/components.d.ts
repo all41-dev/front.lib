@@ -85,6 +85,10 @@ export namespace Components {
         "treeConfig": false | { childField: string; parentField: string; hideAddChild?: (row: any) => boolean };
     }
     interface MarkdownEditor {
+        /**
+          * @default '150px'
+         */
+        "height": string;
         "textareaStyle": { [key: string]: string };
         "value": string;
     }
@@ -104,6 +108,10 @@ export namespace Components {
     }
     interface ScheduleButton {
         "schedule": string;
+    }
+    interface TestActionButton {
+        "relatedto": string;
+        "tableid": string;
     }
     interface TestCustomNavigator {
         "match": any;
@@ -217,6 +225,12 @@ declare global {
         prototype: HTMLScheduleButtonElement;
         new (): HTMLScheduleButtonElement;
     };
+    interface HTMLTestActionButtonElement extends Components.TestActionButton, HTMLStencilElement {
+    }
+    var HTMLTestActionButtonElement: {
+        prototype: HTMLTestActionButtonElement;
+        new (): HTMLTestActionButtonElement;
+    };
     interface HTMLTestCustomNavigatorElement extends Components.TestCustomNavigator, HTMLStencilElement {
     }
     var HTMLTestCustomNavigatorElement: {
@@ -250,6 +264,7 @@ declare global {
         "nav-button": HTMLNavButtonElement;
         "pie-chart-component": HTMLPieChartComponentElement;
         "schedule-button": HTMLScheduleButtonElement;
+        "test-action-button": HTMLTestActionButtonElement;
         "test-custom-navigator": HTMLTestCustomNavigatorElement;
         "test-custom-tabulator": HTMLTestCustomTabulatorElement;
         "test-markdown": HTMLTestMarkdownElement;
@@ -341,6 +356,10 @@ declare namespace LocalJSX {
         "treeConfig"?: false | { childField: string; parentField: string; hideAddChild?: (row: any) => boolean };
     }
     interface MarkdownEditor {
+        /**
+          * @default '150px'
+         */
+        "height"?: string;
         "onValueChanged"?: (event: MarkdownEditorCustomEvent<string>) => void;
         "textareaStyle"?: { [key: string]: string };
         "value"?: string;
@@ -362,6 +381,10 @@ declare namespace LocalJSX {
     interface ScheduleButton {
         "schedule"?: string;
     }
+    interface TestActionButton {
+        "relatedto"?: string;
+        "tableid"?: string;
+    }
     interface TestCustomNavigator {
         "match"?: any;
     }
@@ -380,6 +403,7 @@ declare namespace LocalJSX {
         "nav-button": NavButton;
         "pie-chart-component": PieChartComponent;
         "schedule-button": ScheduleButton;
+        "test-action-button": TestActionButton;
         "test-custom-navigator": TestCustomNavigator;
         "test-custom-tabulator": TestCustomTabulator;
         "test-markdown": TestMarkdown;
@@ -398,6 +422,7 @@ declare module "@stencil/core" {
             "nav-button": LocalJSX.NavButton & JSXBase.HTMLAttributes<HTMLNavButtonElement>;
             "pie-chart-component": LocalJSX.PieChartComponent & JSXBase.HTMLAttributes<HTMLPieChartComponentElement>;
             "schedule-button": LocalJSX.ScheduleButton & JSXBase.HTMLAttributes<HTMLScheduleButtonElement>;
+            "test-action-button": LocalJSX.TestActionButton & JSXBase.HTMLAttributes<HTMLTestActionButtonElement>;
             "test-custom-navigator": LocalJSX.TestCustomNavigator & JSXBase.HTMLAttributes<HTMLTestCustomNavigatorElement>;
             "test-custom-tabulator": LocalJSX.TestCustomTabulator & JSXBase.HTMLAttributes<HTMLTestCustomTabulatorElement>;
             "test-markdown": LocalJSX.TestMarkdown & JSXBase.HTMLAttributes<HTMLTestMarkdownElement>;

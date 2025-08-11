@@ -1,5 +1,5 @@
 import { Build, Component, Event, Prop, Env, EventEmitter, State, JSX, Method, h, Listen } from '@stencil/core';
-import { TabulatorFull, RowComponent, CellComponent, Options, FormatterParams, DownloadType, DownloadOptions } from 'tabulator-tables';
+import { TabulatorFull, RowComponent, CellComponent, Options, FormatterParams, DownloadType, DownloadOptions, ColumnDefinition } from 'tabulator-tables';
 import * as bootstrap from 'bootstrap';
 import { CellHelper, handleError, HtmlHelper, RowHelper } from '../../utils/utils';
 import { CustomTabulatorColumn, CustomTabulatorRecMatching } from '../../interfaces/custom-tabulator.types';
@@ -76,13 +76,11 @@ export class CustomTabulator {
     event.stopPropagation();
     if (this.editedRow) {
       if (this.editedRow.getElement()) {
-        this.editedRow.getElement().style.borderBottomColor = '#dee2e6';
-        this.editedRow.getElement().style.borderBottomWidth = '1px';
+        this.editedRow.getElement().classList.remove('selected-row');
       }
     }
     this.editedRow = row;
-    this.editedRow.getElement().style.borderBottomColor = '#c0dbf3';
-    this.editedRow.getElement().style.borderBottomWidth = '2px';
+    this.editedRow.getElement().classList.add('selected-row');
 
     setTimeout(() => {
       const detailContainer = document.getElementById(`${this.name}-detail-container`);
@@ -135,34 +133,37 @@ export class CustomTabulator {
         this.columns.push({
           title: '',
           field: 'custom-tabulator-controls',
-          hozAlign: 'right',
+          hozAlign: 'center',
           headerSort: false,
           resizable: false,
-          width: 150,
+          width: 50,
           formatter: (cell: CellComponent, _fp: FormatterParams): string | HTMLElement => {
             const record = cell.getRow().getData();
             // console.debug(record);
             const isNew = !record[this.idPropName];
             const hasChilds = this.treeConfig ? cell.getRow().getTreeChildren().length > 0 : false;
-            const btnGroup = HtmlHelper.toElement('<div class="btn-group" style="height: 31px"></div>');
-
+            const btnGroup = HtmlHelper.toElement('<div style="height: 31px"></div>');
+            //activeCellTooltip(`${isNew ? 'Add' : 'Edit'}`, cell);
             if (this.editionMode !== 'inline' && this.editionMode !== 'side' && this.editionMode !== 'bottom') {
               const editBtn = HtmlHelper.toElement(
-                `<button name="editBtn" title="edit" class="btn btn-sm btn-secondary btn-width" type="button" data-bs-toggle="modal" data-bs-target="#${this.name}-editrow-modal">${
-                  isNew ? 'Add' : 'Edit'
-                }</button>`,
+                `<button name="editBtn" 
+                        class="btn btn-sm btn-outline-secondary" 
+                        type="button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#${this.name}-editrow-modal">
+                    <i class="bi ${isNew ? 'bi-plus-circle-fill' : 'bi-pencil-fill'}"></i>
+                </button>`,
               );
+
               editBtn.onclick = event => {
                 event.stopPropagation();
                 if (this.editedRow) {
                   if (this.editedRow.getElement()) {
-                    this.editedRow.getElement().style.borderBottomColor = '#dee2e6';
-                    this.editedRow.getElement().style.borderBottomWidth = '1px';
+                    this.editedRow.getElement().classList.remove('selected-row');
                   }
                 }
                 this.editedRow = cell.getRow();
-                this.editedRow.getElement().style.borderBottomColor = '#c0dbf3';
-                this.editedRow.getElement().style.borderBottomWidth = '2px';
+                this.editedRow.getElement().classList.add('selected-row');
                 if (this.editionMode !== 'modal') {
                   const detailContainer = document.getElementById(`${this.name}-detail-container`);
                   detailContainer.classList.remove(`d-none`);
@@ -220,10 +221,10 @@ export class CustomTabulator {
 
                   if (typeof button === 'string') {
                     // button is a string
-                    buttonElement = HtmlHelper.toElement(`<${button} tableid="${cell.getRow().getData().uuid}"/>`);
+                    buttonElement = HtmlHelper.toElement(`<${button} tableid="${cell.getRow().getData()[this.idPropName]}"/>`);
                   } else if (button.tag && button.props) {
                     // button is an object with 'tag' and 'props'
-                    let elementString = `<${button.tag} tableid="${cell.getRow().getData().uuid}"`;
+                    let elementString = `<${button.tag} tableid="${cell.getRow().getData()[this.idPropName]}"`;
 
                     for (const prop in button.props) {
                       if (button.props.hasOwnProperty(prop)) {
@@ -253,7 +254,7 @@ export class CustomTabulator {
                   confirm('Delete record?') ? this.deleteRow(cell.getRow()) : '';
                 }
               };
-              if (this.isDeletionPermited) {
+              if (this.isDeletionPermited && cell.getRow().getData()[this.idPropName]) {
                 btnGroup.insertBefore(deleteBtn, null);
               }
             }
@@ -334,7 +335,7 @@ export class CustomTabulator {
       }
       this.tabulatorComponent = new TabulatorFull(`#${this.name}`, {
         ...this.options,
-        columns: this.cleanColumns(this.columns),
+        columns: this.cleanColumns(this.columns) as ColumnDefinition[],
       });
 
       this.tabulatorComponent.on('tableBuilt', function () {
@@ -453,6 +454,7 @@ export class CustomTabulator {
       document.addEventListener('openEditModal', this.handleOpenEditModal.bind(this));
     }
   }
+
   async componentDidUpdate(): Promise<void> {
     if (this.data !== this.previousData) {
       let previousEditedRowData;
@@ -697,17 +699,21 @@ export class CustomTabulator {
     });
     this.rowFormater(row);
   }
+
   hideDetail = (): void => {
     const detailContainer = document.getElementById(`${this.name}-detail-container`);
     detailContainer.classList.add(`d-none`);
 
     if (this.editedRow) {
-      this.editedRow.getElement().style.borderBottomColor = '#dee2e6';
-      this.editedRow.getElement().style.borderBottomWidth = '1px';
+      this.editedRow.getElement().classList.remove('selected-row');
     }
   };
+
   rowFormater = (row: RowComponent): void => {
     if (!row) return;
+    if (!row.getElement()?.classList) return;
+
+    row.getElement().classList.remove('selected-row');
     row.getElement().classList.remove('tabulator-row-even');
     if (this.readOnly) return;
 
@@ -883,7 +889,7 @@ export class CustomTabulator {
         if (col.type && col.type === 'array') {
           const fieldsArray = col.field.split('.');
           if (fieldsArray.length > 0 && this.editedRow?.getData()[fieldsArray[0]].length > 0) {
-            return this.editedRow?.getData()[fieldsArray[0]][fieldsArray[1]].uuid === k ? 'selected="selected"' : '';
+            return this.editedRow?.getData()[fieldsArray[0]][fieldsArray[1]][this.idPropName] === k ? 'selected="selected"' : '';
           }
         } else {
           return this.editedRow?.getData()[col.field] === k ? 'selected="selected"' : '';
@@ -946,13 +952,15 @@ export class CustomTabulator {
           </div>
         </div>
 
-        <div class="d-flex flex-wrap gap-2">
+        <div class="btn-group" role="group">
           {this.actionButtonTags && this.createActionButtonGroup()}
-          {this.isDeletionPermited && (
-            <button type="button" name="deleteBtn" class="btn btn-sm btn-danger" title="delete" onClick={this.handleDeleteClick.bind(this)}>
-              <i class="bi bi-trash3 pr-2"></i> Delete Record
+
+          {this.isDeletionPermited && this.editedRow?.getData()[this.idPropName] && (
+            <button type="button" name="deleteBtn" class="btn btn-sm btn-danger d-flex align-items-center" title="Delete" onClick={this.handleDeleteClick.bind(this)}>
+              <i class="bi bi-trash3 me-1"></i>
+              <span class="d-none d-sm-inline">Delete</span>
             </button>
-          )}{' '}
+          )}
         </div>
       </div>
     );
@@ -963,10 +971,10 @@ export class CustomTabulator {
     if (this.confirmBeforeDelete) {
       const userInput = prompt('Please type "delete" to confirm the deletion:');
       if (userInput && userInput.toLowerCase() === 'delete') {
-        this.deleteRow(this.editedRow);
         if (this.editionMode === 'modal') {
           this.modals[0].hide();
         }
+        this.deleteRow(this.editedRow);
       } else {
         alert('Deletion cancelled. You must type "delete" to confirm.');
       }
@@ -982,12 +990,11 @@ export class CustomTabulator {
         cancelButtonText: 'Cancel',
       }).then(result => {
         if (result.isConfirmed) {
+          if (this.editionMode === 'modal') {
+            this.modals[0].hide();
+          }
           this.deleteRow(this.editedRow)
             .then(() => {
-              if (this.editionMode === 'modal') {
-                this.modals[0].hide();
-              }
-
               Swal.fire({
                 toast: true,
                 position: 'top-end',
@@ -1012,24 +1019,22 @@ export class CustomTabulator {
     }
   }
 
-  createActionButtonGroup(): JSX.Element {
-    const buttons: string[] = this.actionButtonTags.map(button => {
-      let buttonElement: string;
+  createActionButtonGroup(): JSX.Element[] {
+    const tableId = this.editedRow?.getData()[this.idPropName];
+
+    return this.actionButtonTags.map((button, index) => {
       if (typeof button === 'string') {
-        buttonElement = `<${button} tableid="${this.editedRow?.getData().uuid}"/>`;
-      } else if (button.tag && button.props) {
-        let elementString = `<${button.tag} tableid="${this.editedRow?.getData().uuid}"`;
-        for (const prop in button.props) {
-          if (button.props.hasOwnProperty(prop)) {
-            elementString += ` ${prop}="${button.props[prop]}"`;
-          }
-        }
-        elementString += '/>';
-        buttonElement = elementString;
+        const Tag = button as any;
+        return <Tag key={index} tableid={tableId} />;
       }
-      return buttonElement;
+
+      if (button.tag && button.props) {
+        const Tag = button.tag as keyof JSX.IntrinsicElements;
+        return <Tag key={index} tableid={tableId} {...button.props} />;
+      }
+
+      return null;
     });
-    return <div class="" id="side-modal-btn-group" style={{ height: '31px' }} innerHTML={buttons.join('')}></div>;
   }
 
   getModalForm(isMap: boolean = false): JSX.Element {
@@ -1360,6 +1365,7 @@ export class CustomTabulator {
               onValueChanged={event => this.detailHandleCodeEditorChange(event, def.field)}
               class="form-control"
               value={this.editedRow?.getData()[def.field]}
+              height="100px"
             ></markdown-editor>
           </div>
         );
@@ -1455,7 +1461,6 @@ export class CustomTabulator {
                   //     ) : Array.isArray(def.editorParams['values']) ?
                   //       def.editorParams['values'].map((opt) => <option value={opt} selected={this.modalRow?.getData()[def.field] === opt}>{opt}</option>) : '' : ''
                 }
-                {}
               </select>
             </label>
           </div>
@@ -1490,13 +1495,7 @@ export class CustomTabulator {
       case 'inline':
         return '';
       case 'modal':
-        return (
-          <div>
-            <div class="modal fade" id={this.name + '-editrow-modal'} tabindex="-1" aria-hidden="false">
-              <div class="modal-xl modal-dialog">{this.getModalForm()}</div>
-            </div>
-          </div>
-        );
+        return '';
       case 'side':
       case 'bottom':
         return this.getSideForm(true);
@@ -1514,7 +1513,9 @@ export class CustomTabulator {
               'col-md-12': ['inline', 'modal', 'bottom'].includes(this.editionMode),
               'col-md-8': this.editionMode === 'side',
             }}
-            style={{ paddingRight: this.editionMode === 'side' ? '0' : 'calc(var(--bs-gutter-x) * 0.5)' }}
+            style={{
+              paddingRight: this.editionMode === 'side' ? '0' : 'calc(var(--bs-gutter-x) * 0.5)',
+            }}
           >
             <div id={this.name}></div>
           </div>
@@ -1539,11 +1540,14 @@ export class CustomTabulator {
                 overflow: 'auto',
               }}
             >
-              {this.getEditionModeContent()}
+              {this.editionMode !== 'modal' ? this.getEditionModeContent() : null}
             </div>
           ) : (
             ''
           )}
+        </div>
+        <div class="modal fade" id={this.name + '-editrow-modal'} tabindex="-1" aria-hidden="true">
+          <div class="modal-xl modal-dialog">{this.getModalForm()}</div>
         </div>
       </div>
     );
