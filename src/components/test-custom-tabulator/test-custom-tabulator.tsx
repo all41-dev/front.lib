@@ -74,6 +74,16 @@ export class TestCustomTabulator {
         visible: false,
       },
       {
+        title: 'test',
+        field: 'test',
+        editable: true,
+        editor: 'tickCross',
+        modalFieldGroup: 'Tabulator Modal 1',
+        headerFilter: 'input',
+        width: 800,
+        visible: false,
+      },
+      {
         title: 'list',
         field: 'list',
         editable: true,

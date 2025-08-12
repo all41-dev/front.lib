@@ -9,6 +9,7 @@
 
 | Property        | Attribute        | Description | Type                         | Default     |
 | --------------- | ---------------- | ----------- | ---------------------------- | ----------- |
+| `height`        | `height`         |             | `string`                     | `'150px'`   |
 | `textareaStyle` | `textarea-style` |             | `{ [key: string]: string; }` | `undefined` |
 | `value`         | `value`          |             | `string`                     | `undefined` |
 

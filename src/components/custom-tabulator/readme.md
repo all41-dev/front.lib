@@ -57,9 +57,9 @@
 
 #### Parameters
 
-| Name  | Type                                                                                                                                                                                                                                                                                                                                                                                               | Description |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `col` | `ColumnDefinition & { required?: boolean; createOnly?: boolean; updateOnly?: boolean; hideInModal?: boolean \| ((cell: CellComponent) => boolean); objectKeyProp?: string; modalFieldGroup?: string; editorReadOnly?: boolean \| ((cell: CellComponent) => boolean); editor?: Editor \| "markdown" \| "password" \| "select" \| "autocomplete" \| "code" \| "float"; obj?: any; type?: "array"; }` |             |
+| Name  | Type                                                                                                                                                                                                                                                                                                                                                                                                               | Description |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| `col` | `Omit<ColumnDefinition, "editor"> & { required?: boolean; createOnly?: boolean; updateOnly?: boolean; hideInModal?: boolean \| ((cell: CellComponent) => boolean); objectKeyProp?: string; modalFieldGroup?: string; editorReadOnly?: boolean \| ((cell: CellComponent) => boolean); editor?: Editor \| "markdown" \| "password" \| "select" \| "autocomplete" \| "code" \| "float"; obj?: any; type?: "array"; }` |             |
 
 #### Returns
 

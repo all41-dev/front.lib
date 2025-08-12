@@ -1,4 +1,4 @@
-import { Build, Component, Event, Prop, Env, EventEmitter, State, JSX, Method, h, Listen } from '@stencil/core';
+import { Build, Component, Event, Prop, Env, EventEmitter, State, JSX, Method, h, Listen, Element } from '@stencil/core';
 import { TabulatorFull, RowComponent, CellComponent, Options, FormatterParams, DownloadType, DownloadOptions, ColumnDefinition } from 'tabulator-tables';
 import * as bootstrap from 'bootstrap';
 import { CellHelper, handleError, HtmlHelper, RowHelper } from '../../utils/utils';
@@ -14,10 +14,8 @@ import Swal from 'sweetalert2';
 })
 export class CustomTabulator {
   @Prop({ mutable: true }) public tabulatorComponent: TabulatorFull;
-  private modals = new Array<bootstrap.Modal>();
-  @State() editingRowData: Object = new Object();
-  @State() previousData: any;
   @Prop({ mutable: true }) postRoute: string;
+
   @Prop() name!: string;
   @Prop() componentTitle?: string;
   @Prop() route!: string;
@@ -30,19 +28,25 @@ export class CustomTabulator {
   @Prop() tabulatorLayout: 'fitDataStretch' | 'fitData' | 'fitColumns' | 'fitDataFill' | 'fitDataTable' = 'fitDataStretch';
   @Prop() data?: any;
   @Prop() tabEndNewRow?: boolean = true;
-  @State() modalRow?: RowComponent;
   @Prop() rowDefault?: Object;
   @Prop() childRowDefault?: Object;
   @Prop() download?: { type: DownloadType; fileName: () => string | string; options: DownloadOptions };
   @Prop() options?: Options = {};
-  @State() editedRow?: RowComponent;
-  @State() actionButtonTagsContainer;
-  // needs to have tableid props
+
   @Prop() actionButtonTags: (string | { tag: string; props: any })[];
   @Prop() confirmBeforeDelete = false;
   @Prop() index: string = 'uuid';
   @Prop() requestHeaders: { [key: string]: string };
   @Prop() isDeletionPermited: boolean = true;
+
+  @State() editedRow?: RowComponent;
+  @State() actionButtonTagsContainer;
+  @State() modalRow?: RowComponent;
+  @State() editingRowData: Object = new Object();
+  @State() previousData: any;
+  @State() actionButtonsExist: boolean;
+
+  // needs to have tableid props
 
   // it can looks like an array : ["show-log-button", "other-action-button"]
   // OR
@@ -63,6 +67,9 @@ export class CustomTabulator {
   @Event({ bubbles: true, composed: true }) dataLoadError: EventEmitter<{ error: any; componentName: string }>;
   @Event({ bubbles: true, composed: true }) dataProcessed: EventEmitter<{ data: any[]; componentName: string }>;
 
+  @Element() el!: HTMLElement;
+
+  private modals = new Array<bootstrap.Modal>();
   closeOnSave: boolean = false;
 
   @Listen('hide.bs.modal')
@@ -135,7 +142,6 @@ export class CustomTabulator {
           field: 'custom-tabulator-controls',
           hozAlign: 'center',
           headerSort: false,
-          resizable: false,
           width: 50,
           formatter: (cell: CellComponent, _fp: FormatterParams): string | HTMLElement => {
             const record = cell.getRow().getData();
@@ -147,11 +153,11 @@ export class CustomTabulator {
             if (this.editionMode !== 'inline' && this.editionMode !== 'side' && this.editionMode !== 'bottom') {
               const editBtn = HtmlHelper.toElement(
                 `<button name="editBtn" 
-                        class="btn btn-sm btn-outline-secondary" 
+                        class="btn btn-sm btn-secondary" 
                         type="button" 
                         data-bs-toggle="modal" 
                         data-bs-target="#${this.name}-editrow-modal">
-                    <i class="bi ${isNew ? 'bi-plus-circle-fill' : 'bi-pencil-fill'}"></i>
+                    <i class="bi ${isNew ? 'bi-plus-circle' : 'bi-pencil'}"></i>
                 </button>`,
               );
 
@@ -452,6 +458,9 @@ export class CustomTabulator {
         }, 50);
       }
       document.addEventListener('openEditModal', this.handleOpenEditModal.bind(this));
+      const hasButtons = this.hasActionButtons();
+      console.log('Has buttons:', hasButtons);
+      this.actionButtonsExist = hasButtons;
     }
   }
 
@@ -484,6 +493,8 @@ export class CustomTabulator {
         }
       }),
     );
+    const hasButtons = this.hasActionButtons();
+    this.actionButtonsExist = hasButtons;
   }
   private resetFormElementStyles(detailContainer: HTMLElement) {
     const editorNames = Array.from(
@@ -952,11 +963,20 @@ export class CustomTabulator {
           </div>
         </div>
 
-        <div class="btn-group" role="group">
-          {this.actionButtonTags && this.createActionButtonGroup()}
-
+        <div class="d-flex align-items-center">
+          {this.actionButtonTags && (
+            <div class={`action-button-group d-flex ${this.isDeletionPermited && this.editedRow?.getData()[this.idPropName] ? 'has-delete' : 'no-delete'}`}>
+              {this.createActionButtonGroup()}
+            </div>
+          )}
           {this.isDeletionPermited && this.editedRow?.getData()[this.idPropName] && (
-            <button type="button" name="deleteBtn" class="btn btn-sm btn-danger d-flex align-items-center" title="Delete" onClick={this.handleDeleteClick.bind(this)}>
+            <button
+              type="button"
+              name="deleteBtn"
+              class={`btn btn-sm btn-danger d-flex align-items-center delete-button ${this.actionButtonsExist ? 'attached' : ''}`}
+              title="Delete"
+              onClick={this.handleDeleteClick.bind(this)}
+            >
               <i class="bi bi-trash3 me-1"></i>
               <span class="d-none d-sm-inline">Delete</span>
             </button>
@@ -964,6 +984,13 @@ export class CustomTabulator {
         </div>
       </div>
     );
+  }
+
+  hasActionButtons(): boolean {
+    const actionButtonGroup = this.el.shadowRoot ? this.el.shadowRoot.querySelector('.action-button-group') : this.el.querySelector('.action-button-group');
+
+    if (!actionButtonGroup) return false;
+    return actionButtonGroup.querySelector('button') !== null;
   }
 
   handleDeleteClick(event) {
@@ -1021,16 +1048,33 @@ export class CustomTabulator {
 
   createActionButtonGroup(): JSX.Element[] {
     const tableId = this.editedRow?.getData()[this.idPropName];
+    const total = this.actionButtonTags?.length ?? 0;
+    return this.actionButtonTags?.map((button, index) => {
+      const positionClass =
+        total === 1
+          ? `action-single ${this.isDeletionPermited && this.editedRow?.getData()[this.idPropName] ? 'has-delete' : 'no-delete'}`
+          : index === 0
+          ? 'action-first'
+          : index === total - 1
+          ? `action-last ${this.isDeletionPermited && this.editedRow?.getData()[this.idPropName] ? 'has-delete' : 'no-delete'}`
+          : 'action-middle';
 
-    return this.actionButtonTags.map((button, index) => {
       if (typeof button === 'string') {
         const Tag = button as any;
-        return <Tag key={index} tableid={tableId} />;
+        return (
+          <div class={positionClass}>
+            <Tag key={index} tableid={tableId} />
+          </div>
+        );
       }
 
       if (button.tag && button.props) {
         const Tag = button.tag as keyof JSX.IntrinsicElements;
-        return <Tag key={index} tableid={tableId} {...button.props} />;
+        return (
+          <div class={positionClass}>
+            <Tag key={index} tableid={tableId} {...button.props} />
+          </div>
+        );
       }
 
       return null;
@@ -1371,21 +1415,24 @@ export class CustomTabulator {
         );
       case 'tickCross':
         return (
-          <div class={displayNoneClass}>
-            <label>{def.title}</label>
+          <div class={`d-flex align-items-center gap-3 ${displayNoneClass}`}>
+            <label htmlFor={fieldId} class="mb-0">
+              {def.title}
+            </label>
 
-            <input
-              id={fieldId}
-              name={def.field}
-              // defaultChecked={this.editedRow?.getData()[def.field]}
-              checked={this.editedRow?.getData()[def.field]}
-              onInput={e => this.detailHandleFormChange(e, def.field)}
-              class="ms-1 customCheck"
-              type="checkbox"
-              required={(def as any).required}
-              disabled={typeof def.editorReadOnly === 'function' ? def.editorReadOnly(this.editedRow?.getCell(def.field)) : !!def.editorReadOnly}
-              hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal}
-            />
+            <div class="form-check form-switch m-0">
+              <input
+                id={fieldId}
+                name={def.field}
+                class="form-check-input custom-switch-check"
+                type="checkbox"
+                checked={this.editedRow?.getData()[def.field]}
+                onInput={e => this.detailHandleFormChange(e, def.field)}
+                required={(def as any).required}
+                disabled={typeof def.editorReadOnly === 'function' ? def.editorReadOnly(this.editedRow?.getCell(def.field)) : !!def.editorReadOnly}
+                hidden={typeof def.hideInModal === 'function' ? def.hideInModal(this.editedRow?.getCell(def.field)) : !!def.hideInModal}
+              />
+            </div>
           </div>
         );
       case 'date':

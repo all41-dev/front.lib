@@ -26,10 +26,13 @@ export class TestActionButton {
   }
 
   render() {
-    return (
-      <button onClick={() => this.handleClick()} class="btn btn-sm btn-secondary" title="Open API documentation">
-        View Documentation
-      </button>
-    );
+    if (this.tableid == '1' || this.tableid == 'undefined') return null;
+    else {
+      return (
+        <button onClick={() => this.handleClick()} part="button" class="btn btn-sm btn-outline-secondary" title="Open API documentation">
+          View Documentation
+        </button>
+      );
+    }
   }
 }
