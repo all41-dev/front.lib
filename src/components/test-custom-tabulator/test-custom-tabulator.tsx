@@ -147,7 +147,7 @@ export class TestCustomTabulator {
             readOnly={false}
             route="users"
             idPropName="id"
-            editionMode="modal"
+            editionMode="side"
             height="500"
             actionButtonTags={['test-action-button']}
             columns={apiColumns}

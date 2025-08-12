@@ -459,7 +459,6 @@ export class CustomTabulator {
       }
       document.addEventListener('openEditModal', this.handleOpenEditModal.bind(this));
       const hasButtons = this.hasActionButtons();
-      console.log('Has buttons:', hasButtons);
       this.actionButtonsExist = hasButtons;
     }
   }
@@ -529,7 +528,9 @@ export class CustomTabulator {
 
     editorNames.forEach(type => {
       Array.from(detailContainer.querySelectorAll(type)).forEach((formElem: HTMLElement) => {
-        formElem.style.backgroundColor = 'inherit';
+        if (!formElem.classList.contains('form-check-input')) {
+          formElem.style.backgroundColor = 'inherit';
+        }
       });
     });
   }
@@ -1424,7 +1425,7 @@ export class CustomTabulator {
               <input
                 id={fieldId}
                 name={def.field}
-                class="form-check-input custom-switch-check"
+                class="form-check-input"
                 type="checkbox"
                 checked={this.editedRow?.getData()[def.field]}
                 onInput={e => this.detailHandleFormChange(e, def.field)}
