@@ -275,7 +275,9 @@ export class CustomTabulator {
           titleFormatter: () => {
             const btnGroup = HtmlHelper.toElement('<div class=""></div>');
             const revertChangesBtn = HtmlHelper.toElement(
-              `<button id="${this.name}-revert-btn" class="btn btn-sm btn-secondary" title="Revert changes" hidden>Revert all</button>`,
+              `<button id="${this.name}-revert-btn" class="btn btn-sm btn-secondary" title="Revert changes" hidden>
+     <i class="bi bi-arrow-counterclockwise"></i>
+   </button>`,
             );
             revertChangesBtn.onclick = () => {
               const detailContainer = document.getElementById(`${this.name}-detail-container`);
@@ -283,7 +285,9 @@ export class CustomTabulator {
               this.resetFormElementStyles(detailContainer);
             };
 
-            const saveTableBtn = HtmlHelper.toElement(`<button id="${this.name}-save-all-btn" class="btn btn-sm btn-primary" title="save all" hidden>Save all</button>`);
+            const saveTableBtn = HtmlHelper.toElement(`<button id="${this.name}-save-all-btn" class="btn btn-sm btn-primary" title="Save all" hidden>
+     <i class="bi bi-save"></i>
+   </button>`);
 
             saveTableBtn.onclick = () => {
               this.saveTable();
