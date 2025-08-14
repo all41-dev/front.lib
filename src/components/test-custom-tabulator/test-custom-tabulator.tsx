@@ -150,6 +150,7 @@ export class TestCustomTabulator {
             editionMode="side"
             height="500"
             actionButtonTags={['test-action-button']}
+            tabulatorLayout={'fitDataFill'}
             columns={apiColumns}
           ></custom-tabulator>
         ) : (

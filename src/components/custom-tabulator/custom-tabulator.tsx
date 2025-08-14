@@ -142,7 +142,7 @@ export class CustomTabulator {
           field: 'custom-tabulator-controls',
           hozAlign: 'center',
           headerSort: false,
-          width: 50,
+          width: 100,
           formatter: (cell: CellComponent, _fp: FormatterParams): string | HTMLElement => {
             const record = cell.getRow().getData();
             // console.debug(record);
