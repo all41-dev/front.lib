@@ -29,9 +29,6 @@ export const config: Config = {
       externalRuntime: false,
     },
     {
-      type: 'docs-readme',
-    },
-    {
       type: 'www',
       serviceWorker: null, // disable service workers
     },
