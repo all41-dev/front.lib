@@ -15,25 +15,23 @@
     "stencil-tailwind-plugin": "^2.0.5",
     "tailwindcss": "^4.1.13"
   },
+  "types": "dist/types/components.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
+      "types": "./dist/types/components.d.ts",
       "import": "./dist/front-lib/front-lib.esm.js",
       "require": "./dist/front-lib/front-lib.cjs.js",
       "default": "./dist/front-lib/front-lib.esm.js"
     },
     "./loader": {
+      "types": "./loader/index.d.ts",
       "import": "./loader/index.js",
       "require": "./loader/index.cjs",
-      "types": "./loader/index.d.ts",
       "default": "./loader/index.js"
-    },
-    "./my-component": {
-      "import": "./dist/components/my-component.js",
-      "types": "./dist/components/my-component.d.ts"
     }
   },
-  "files": [
+   "files": [
+    "www/**/*",
     "dist/",
     "loader/"
   ],
@@ -56,7 +54,6 @@
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
-  "types": "dist/types/index.d.ts",
   "unpkg": "dist/front-lib/front-lib.esm.js",
-  "version": "2.0.0-alpha.1"
+  "version": "2.0.0-alpha.2"
 }
