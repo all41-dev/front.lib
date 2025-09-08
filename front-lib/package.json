@@ -17,13 +17,16 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/front-lib/front-lib.esm.js",
-      "require": "./dist/front-lib/front-lib.cjs.js"
+      "require": "./dist/front-lib/front-lib.cjs.js",
+      "default": "./dist/front-lib/front-lib.esm.js"
     },
     "./loader": {
       "import": "./loader/index.js",
       "require": "./loader/index.cjs",
-      "types": "./loader/index.d.ts"
+      "types": "./loader/index.d.ts",
+      "default": "./loader/index.js"
     },
     "./my-component": {
       "import": "./dist/components/my-component.js",
